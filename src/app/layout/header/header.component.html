@@ -1,0 +1,27 @@
+<div class="header-container">
+  <div class="logo-containter left">
+    <a (click)="toggle()" href="#" class="navigation"><i class="nb-menu control-icon"></i></a>
+    <div class="logo" (click)="toggle()">ngx-<span>admin</span></div>
+  </div>
+</div>
+
+<div class="header-container">
+  <nb-actions size="medium" class="right">
+    <nb-action icon="nb-search"></nb-action>
+    <nb-action icon="nb-power-circled"></nb-action>
+    <nb-action icon="nb-person"></nb-action>
+    <nb-action icon="nb-home"></nb-action>
+    <nb-action (click)="login(dialog)">
+      <nb-user [name]="account?.fullname" [title]="account?.username" [nbContextMenu]="items">
+      </nb-user>
+    </nb-action>
+  </nb-actions>
+</div>
+
+<ng-template #dialog>
+  <nb-card size="medium" class="bg-light" style="min-width: 300px">
+    <nb-card-body>
+      <travel-login></travel-login>
+    </nb-card-body>
+  </nb-card>
+</ng-template>

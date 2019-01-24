@@ -1,0 +1,22 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@nebular/bootstrap/styles/globals';
+@import '~@nebular/theme/styles/prebuilt/default';
+@import '~@nebular/theme/styles/prebuilt/corporate';
+@import '~@nebular/auth/styles/all';
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+@include nb-install() {
+  @include nb-bootstrap-global();
+
+  button {
+    margin: 5px;
+  }
+}
+
+html {
+  font-size: 14px;
+}
+
+
+//html, body { height: 100%; }
+//body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

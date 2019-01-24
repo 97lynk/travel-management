@@ -1,0 +1,52 @@
+@import '../../../themes';
+@import '~bootstrap/scss/mixins/breakpoints';
+@import '~@nebular/theme/styles/global/breakpoints';
+
+@include nb-install-component() {
+  display: block;
+
+  .title-placeholder {
+    height: 1.8rem;
+    margin-bottom: 0.5rem;
+    width: 80%;
+  }
+
+  .text-placeholder {
+    height: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  .link-placeholder {
+    height: 1.25rem;
+    width: 5rem;
+  }
+
+  [class$='placeholder'] {
+    background: rgba(nb-theme(layout-bg), 0.6);
+  }
+
+  /deep/ body {
+    height: 30rem;
+  }
+
+  :host {
+    display: block;
+    margin: 0 auto;
+    max-width: 50rem;
+  }
+
+  .nb-spinner-container {
+    flex: 1 0 4rem;
+  }
+
+  pre {
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    white-space: pre-wrap; /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+  }
+}
+

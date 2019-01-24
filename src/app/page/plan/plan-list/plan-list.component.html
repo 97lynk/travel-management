@@ -1,0 +1,46 @@
+<div class="infinite-cards row">
+  <div class="col">
+    <nb-card>
+      <nb-card-header>
+        <div class="d-flex justify-content-between">
+          <h2>Danh sách plan</h2>
+          <button nbButton size="small">Lập plan mới</button>
+        </div>
+      </nb-card-header>
+      <div [nbSpinner]="loadingPrevious"></div>
+      <nb-list
+              nbInfiniteList
+              listenWindowScroll
+              [threshold]="200"
+              (topThreshold)="loadPrevious()"
+              (bottomThreshold)="loadNext()"
+              nbListPageTracker
+              [startPage]="startPage"
+              [pageSize]="page.size"
+              (pageChange)="updateUrl($event)">
+        <nb-list-item *ngFor="let plan of plans">
+          <article>
+            <h4>#{{ plan.id }} - {{plan.name}}</h4>
+            <hr/>
+            <small>Thời gian: {{ plan.tour?.numberOfDate }} ngày {{ plan.tour?.numberOfNight }} đêm |
+              Khởi hành: {{ plan.startTime | date}}
+            </small>
+            <br/>
+            <small>Giá {{ plan.adultPrice | currency: 'VND' }} / {{ plan.childPrice | currency: 'VND'}}</small>
+            <pre>{{ plan.tour?.description }}</pre>
+            <a href="javascript:void(0)" [routerLink]="['/management/plans/edit', plan.id]">Chỉnh sửa </a> |
+            <a href="http://localhost:8080/data/contents/{{ plan.tour?.fileContentUrl }}"
+               target="_blank">Xem trước</a>
+          </article>
+        </nb-list-item>
+        <nb-list-item *ngIf="loadError">Sommething went wrong</nb-list-item>
+        <nb-list-item *ngFor="let _ of placeholders">
+          <div class="title-placeholder"></div>
+          <hr/>
+          <div class="text-placeholder"></div>
+          <div class="link-placeholder"></div>
+        </nb-list-item>
+      </nb-list>
+    </nb-card>
+  </div>
+</div>
