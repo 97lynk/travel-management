@@ -143,7 +143,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
   }
 
   loadNext() {
-    if (this.loadingNext || this.pageToLoadNext >= 3 || this.completePage[this.pageToLoadNext]) return;
+    if (this.loadingNext || this.pageToLoadNext >= this.page.totalPages || this.completePage[this.pageToLoadNext]) return;
 
     // set flag prevent multiple request in the same page
     this.completePage[this.pageToLoadNext] = true;

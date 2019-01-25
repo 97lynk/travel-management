@@ -12,6 +12,7 @@ import {map, startWith} from 'rxjs/operators';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material';
 import {VTextEncodePipe} from '../../../data/pipe/vtext-encode.pipe';
+import {NbDatepickerComponent} from '@nebular/theme/components/datepicker/datepicker.component';
 
 @Component({
   selector: 'app-plan-form',
@@ -22,7 +23,7 @@ import {VTextEncodePipe} from '../../../data/pipe/vtext-encode.pipe';
 })
 export class PlanFormComponent implements OnInit {
 
-  // matchips variales
+  // combine matchips with matautocomplete
   @ViewChild('placeInput') placeInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
@@ -32,11 +33,11 @@ export class PlanFormComponent implements OnInit {
 
   filteredProvinces: Observable<Place[]>;
 
-  // contains all places expect places in  choosedPlaces
+  // contains all places expect places in  selectedPlaces
   provinces: Place[];
 
-  // constains choosed places
-  choosedPlaces: Place[] = [];
+  // constains selected places
+  selectedPlaces: Place[] = [];
 
   // tours to planning
   tours: Tour[];
@@ -59,7 +60,9 @@ export class PlanFormComponent implements OnInit {
   };
 
   @ViewChild('planStepper') planStepper: NbStepperComponent;
+  @ViewChild('startDatePicker') startDatePicker: NbDatepickerComponent<any>;
 
+  // reactive form control
   stepperForm: {
     chooseTour: FormGroup,
     commonInfo: FormGroup,
@@ -82,7 +85,7 @@ export class PlanFormComponent implements OnInit {
     // init variables
     this.tours = [];
     this.provinces = [];
-    this.choosedPlaces = [];
+    this.selectedPlaces = [];
     this.plan = new Plan();
     this.INSERT_MODE = true;
     this.complete = {
@@ -109,10 +112,7 @@ export class PlanFormComponent implements OnInit {
       // for add a new plan
       if (Number.isNaN(this.planId)) this.router.navigate(['/management/plans', 'add']);
       else { // for edit plan
-        this.tourService.getPlanById(this.planId, ['tour', 'places']).subscribe((plan: Plan) => {
-          this.plan = plan;
-          this.choosedPlaces.push(...plan.places);
-        });
+        this.tourService.getPlanById(this.planId, ['tour', 'places']).subscribe((plan: Plan) => this.plan = plan);
         this.INSERT_MODE = false;
       }
 
@@ -121,44 +121,44 @@ export class PlanFormComponent implements OnInit {
     console.log('PLAN FORM: mode =', (this.INSERT_MODE) ? 'INSERT' : 'EDIT');
 
     // handle event input
-    this.filteredProvinces = this.inputPlace.valueChanges
-        .pipe(
-            startWith(''),
-            map((input: string | Place | null) => input ? this._filterStates(input) : this.provinces.slice())
-        );
+    this.filteredProvinces = this.inputPlace.valueChanges.pipe(
+        startWith(''),
+        map((input: string | Place | null) => input ? this._filterStates(input) : this.provinces.slice())
+    );
 
-    if (this.INSERT_MODE)
-      this.stepperForm = {
-        chooseTour: this.fb.group({
-          tour: ['', Validators.required]
-        }),
-        commonInfo: this.fb.group({
-          title: ['', Validators.required],
-          url: ['', Validators.required],
-        }),
-        time: this.fb.group({
-          time: ['', Validators.required]
-        }),
-        priceAndTicket: this.fb.group({
-          adultPrice: ['', [Validators.required, Validators.min(1000000)]],
-          childPrice: ['', [Validators.required, Validators.min(1000000)]],
-          reversedSlot: ['', Validators.required],
-          totalSlot: ['', [Validators.required, Validators.min(20)]]
-        }),
-        choosePlace: this.fb.group({
-          places: [[], Validators.required]
-        }),
-        // confirm: this.fb.group({})
-      };
-    else
-      this.stepperForm = {
-        chooseTour: this.fb.group({}),
-        commonInfo: this.fb.group({}),
-        time: this.fb.group({}),
-        priceAndTicket: this.fb.group({}),
-        choosePlace: this.fb.group({}),
-        // confirm: this.fb.group({}),
-      };
+    // if (this.INSERT_MODE)
+    this.stepperForm = {
+      chooseTour: this.fb.group({
+        tour: ['', Validators.required]
+      }),
+      commonInfo: this.fb.group({
+        title: ['', Validators.required],
+        url: ['', Validators.required],
+      }),
+      time: this.fb.group({
+        time: ['', Validators.required]
+      }),
+      priceAndTicket: this.fb.group({
+        adultPrice: [1000000, [Validators.min(1000000), Validators.required]],
+        childPrice: [1000000, [Validators.min(1000000), Validators.required]],
+        reversedSlot: [0, [Validators.min(0), Validators.required]],
+        totalSlot: [20, [Validators.min(20), Validators.required]]
+      }),
+      choosePlace: this.fb.group({
+        places: [[], Validators.required]
+      })
+    };
+    // else
+    //   this.stepperForm = {
+    //     chooseTour: this.fb.group({tour: ['']}),
+    //     commonInfo: this.fb.group({title: [''], url: [''],}),
+    //     time: this.fb.group({time: ['']}),
+    //     priceAndTicket: this.fb.group({
+    //       adultPrice: [0], childPrice: [0],
+    //       reversedSlot: [0], totalSlot: [0]
+    //     }),
+    //     choosePlace: this.fb.group({places: [[]]})
+    //   };
   }
 
   /**
@@ -166,70 +166,196 @@ export class PlanFormComponent implements OnInit {
    * @param tour
    * @param isOldTour
    */
-  completeChooseTour(tour: Tour, isOldTour) {
-    this.plan.tour = tour;
-    this.plan.name = tour.name;
-    this.plan.url = this.vtextPipe.transform(tour.name);
+  chooseTour(tour: Tour, isOldTour) {
+    // set selected tour
+    this.stepperForm.chooseTour.setValue({tour: tour});
 
-    if (this.INSERT_MODE) this.startDate = new Date();
-    else this.startDate = new Date(this.plan.startTime);
+    // preparing next step
+    this.stepperForm.commonInfo.setValue({
+      title: tour.name, url: this.vtextPipe.transform(tour.name)
+    });
 
-    this.stepperForm.chooseTour.controls['tour'].setValue(tour);
+    this.stepperForm.commonInfo.get('title').valueChanges.subscribe(value => {
+      this.stepperForm.commonInfo.get('url').setValue(this.vtextPipe.transform(value));
+    });
+
     this.planStepper.next();
+    console.log('complete step 1: ', JSON.stringify(tour, null, 2));
   }
 
-  /**
-   * check date in datepicker dialog
-   * @param date
-   */
-  submitChooseDate(date) {
-    this.startDate = new Date(date);
-    this.plan.startTime = this.startDate.getTime();
-    this.stepperForm.time.controls['time'].setValue(date);
-  }
+  submitCommonInfo = () => {
+    // preparing next step
+    // this.startDatePicker.min = new Date(); // min is today
+
+    if (this.INSERT_MODE) {
+      const tomorrow = Date.now() + 24 * 60 * 60 * 1000;
+      this.startDate = new Date(tomorrow);
+    } else {
+      this.startDate = new Date(this.plan.startTime);
+    }
+
+    this.startDatePicker.value = this.startDate;
+    this.stepperForm.time.setValue({time: this.startDate});
+
+    this.planStepper.next();
+    console.log('complete step 2: ', this.stepperForm.commonInfo.value);
+  };
+
+  submitChooseDate = () => {
+    // set selected date
+    this.stepperForm.time.setValue({time: this.startDate});
+
+    // preparing next step
+    if (this.INSERT_MODE) {
+      this.stepperForm.priceAndTicket.setValue({
+        adultPrice: 1000000,
+        childPrice: 1000000,
+        reversedSlot: 0,
+        totalSlot: 20
+      });
+    } else {
+      this.stepperForm.priceAndTicket.setValue({
+        adultPrice: this.plan.adultPrice,
+        childPrice: this.plan.childPrice,
+        reversedSlot: this.plan.numberOfReservedSlot,
+        totalSlot: this.plan.numberOfSlot
+      });
+    }
+
+    this.planStepper.next();
+    console.log('complete step 3: ', this.stepperForm.time.value);
+  };
 
   /**
    * submit price and ticket
    */
   submitPriceAndTicket = () => {
-    // remove places in provinces already in choosedPlaces
-    if (this.INSERT_MODE) return;
-    this.provinces = this.provinces.filter(p => !this.plan.placeIds.includes(p.id));
-    this.stepperForm.choosePlace.controls['places'].setValue(this.choosedPlaces);
+    // prepare next step
+    if (!this.INSERT_MODE) {
+      // push places in response data to seclected list
+      this.selectedPlaces.push(...this.plan.places);
+      // make response empty
+      this.plan.places = [];
+      // remove places in provinces already in selectedPlaces
+      this.provinces = this.provinces.filter(p => !this.plan.placeIds.includes(p.id));
+
+      this.stepperForm.choosePlace.setValue({places: this.selectedPlaces});
+    }
+
+    this.planStepper.next();
+    console.log('complete step 4: ', this.stepperForm.priceAndTicket.value);
+  };
+
+  submitChoosePlaces = () => {
+    // set selected places
+    this.stepperForm.choosePlace.setValue({places: this.selectedPlaces});
+
+    // prepare for last step
+    this.plan = new Plan();
+    this.plan.id = 0;
+    this.plan.tour = this.getControl('chooseTour', 'tour').value;
+    this.plan.name = this.getControl('commonInfo', 'title').value;
+    this.plan.url = this.getControl('commonInfo', 'url').value;
+    this.plan.startTime = this.getControl('time', 'time').value;
+    this.plan.adultPrice = this.getControl('priceAndTicket', 'adultPrice').value;
+    this.plan.childPrice = this.getControl('priceAndTicket', 'childPrice').value;
+    this.plan.numberOfSlot = this.getControl('priceAndTicket', 'totalSlot').value;
+    this.plan.numberOfReservedSlot = this.getControl('priceAndTicket', 'reversedSlot').value;
+    this.plan['tourId'] = this.plan.tour.id;
+    this.plan.placeIds = this.getControl('choosePlace', 'places').value.map(p => p.id);
+
+    this.planStepper.next();
+    console.log('complete step 5: ', this.stepperForm.choosePlace.value);
   };
 
   /**
-   * move a place from choosedPlaces array to provinces array
+   * submit to complete stepper
+   */
+  submitPlanForm() {
+
+    if (this.INSERT_MODE)
+      this.tourService.addNewPlan(this.plan)
+          .subscribe(
+              (plan: Plan) => {
+                this.complete = {
+                  title: 'Thành công',
+                  message: `Plan#${plan.id} đã được thêm thành công!`,
+                  textType: 'text-success',
+                  icon: 'eva eva-done-all-outline'
+                };
+                this.planStepper.next();
+              },
+              error => {
+                this.complete = {
+                  title: 'Đã xảy ra lỗi',
+                  message: `Plan chưa được thêm.`,
+                  textType: 'text-danger',
+                  icon: 'eva eva-alert-circle'
+                };
+                this.planStepper.next();
+              });
+    else
+      this.tourService.updatePlanById(this.planId, this.plan)
+          .subscribe(
+              (plan: Plan) => {
+                this.complete = {
+                  title: 'Thành công',
+                  message: `Plan#${this.planId} đã được chỉnh sửa thành công!`,
+                  textType: 'text-success',
+                  icon: 'eva eva-done-all-outline'
+                };
+                this.planStepper.next();
+              },
+              error => {
+                this.complete = {
+                  title: 'Đã xảy ra lỗi',
+                  message: `Plan#${this.planId} chưa được chỉnh sửa.`,
+                  textType: 'text-danger',
+                  icon: 'eva eva-alert-circle'
+                };
+                this.planStepper.next();
+              });
+  }
+
+  getControl = (group: string, control: string) => this.stepperForm[group].get(control);
+
+  /**
+   * =========== =========== =========== ===========
+   *  functions of matchips and matautocomplete
+   * =========== =========== =========== ===========
+   */
+
+  /**
+   * move a place from selectedPlaces array to provinces array
    * @param p
    */
   remove = (p: Place) => {
     this.provinces.push(p);
-    const index = this.choosedPlaces.indexOf(p);
+    const index = this.selectedPlaces.indexOf(p);
     if (index >= 0) {
-      this.choosedPlaces.splice(index, 1);
+      this.selectedPlaces.splice(index, 1);
     }
-
-    this.stepperForm.choosePlace.controls['places'].setValue(this.choosedPlaces);
+    this.stepperForm.choosePlace.setValue({places: this.selectedPlaces});
   };
 
   /**
-   * move a place from provinces array to choosedPlaces array
+   * move a place from provinces array to selectedPlaces array
    * @param p
    */
   add = (p: Place) => {
-    this.choosedPlaces.push(p);
+    this.selectedPlaces.push(p);
     const index = this.provinces.indexOf(p);
     if (index >= 0) {
       this.provinces.splice(index, 1);
     }
-    this.stepperForm.choosePlace.controls['places'].setValue(this.choosedPlaces);
+    this.stepperForm.choosePlace.setValue({places: this.selectedPlaces});
   };
 
   /**
    * handle event click option in selection
    * @param event
    */
-  selected = (event: MatAutocompleteSelectedEvent) => {
+  selectItem = (event: MatAutocompleteSelectedEvent) => {
     this.add(event.option.value);
 
     // reset input
@@ -250,63 +376,4 @@ export class PlanFormComponent implements OnInit {
     } else return this.provinces.filter(p => p.id === value.id);
   };
 
-  /**
-   * submit to complete stepper
-   */
-  submitPlanForm() {
-    const newPlan = new Plan();
-    newPlan.id = this.plan.id;
-    newPlan.name = this.plan.name;
-    newPlan.url = this.plan.url;
-    newPlan.startTime = this.plan.startTime;
-    newPlan.numberOfSlot = this.plan.numberOfSlot;
-    newPlan.numberOfReservedSlot = this.plan.numberOfReservedSlot;
-    newPlan.adultPrice = this.plan.adultPrice;
-    newPlan.childPrice = this.plan.childPrice;
-    newPlan['tourId'] = this.plan.tour.id;
-    newPlan.placeIds = this.choosedPlaces.map(p => p.id);
-
-    if (this.INSERT_MODE)
-      this.tourService.addNewPlan(newPlan)
-          .subscribe(
-              (plan: Plan) => {
-                this.complete = {
-                  title: 'Thành công',
-                  message: `Plan#${plan.id} đã được thêm thành công!`,
-                  textType: 'text-success',
-                  icon: 'eva eva-done-all-outline'
-                };
-                this.planStepper.next();
-              },
-              error => {
-                this.complete = {
-                  title: 'Đã xảy ra lỗi',
-                  message: `Plan#${newPlan.id} chưa được thêm.`,
-                  textType: 'text-danger',
-                  icon: 'eva eva-alert-circle'
-                };
-                this.planStepper.next();
-              });
-    else
-      this.tourService.updatePlanById(newPlan.id, newPlan)
-          .subscribe(
-              (plan: Plan) => {
-                this.complete = {
-                  title: 'Thành công',
-                  message: `Plan#${newPlan.id} đã được chỉnh sửa thành công!`,
-                  textType: 'text-success',
-                  icon: 'eva eva-done-all-outline'
-                };
-                this.planStepper.next();
-              },
-              error => {
-                this.complete = {
-                  title: 'Đã xảy ra lỗi',
-                  message: `Plan#${newPlan.id} chưa được chỉnh sửa.`,
-                  textType: 'text-danger',
-                  icon: 'eva eva-alert-circle'
-                };
-                this.planStepper.next();
-              });
-  }
 }

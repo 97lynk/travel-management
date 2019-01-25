@@ -4,11 +4,12 @@
   <nb-card-body class="mt-0">
     <nb-stepper orientation="vertical" #planStepper>
 
+      <!--step 1-->
       <nb-step label="Chọn tour" [stepControl]="stepperForm.chooseTour">
         <h2>Chọn tour
-          <button nbButton size="xsmall" nbStepperNext [hidden]="INSERT_MODE"
-                  (click)="completeChooseTour(plan.tour, true)" shape="rectangle">
-            Chọn tour cũ <i class="nb-arrow-right font-w-bold"></i>
+          <button nbButton size="xsmall" [hidden]="INSERT_MODE"
+                  shape="rectangle" (click)="chooseTour(plan.tour, true)">Chọn tour cũ
+            <i class="nb-arrow-right font-w-bold"></i>
           </button>
         </h2>
 
@@ -37,8 +38,8 @@
                   <nb-card-back>
                     <nb-card class="border-0">
                       <nb-card-body>
-                        <button nbButton size="xsmall" (click)="completeChooseTour(tour, false)"
-                                shape="rectangle">Lập plan
+                        <button nbButton size="xsmall" (click)="chooseTour(tour, false)" shape="rectangle">
+                          Lập plan
                         </button>
                       </nb-card-body>
                     </nb-card>
@@ -51,113 +52,180 @@
         </div>
       </nb-step>
 
+      <!--step 2-->
       <nb-step label="Thông tin chung" [stepControl]="stepperForm.commonInfo">
         <h2>Thiết lập thông tin
-          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle"><i class="nb-arrow-left font-w-bold"></i>
-            Trước
+          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
+            <i class="nb-arrow-left font-w-bold"></i> Trước
           </button>
-          <button nbButton size="xsmall" nbStepperNext shape="rectangle">Tiếp theo
-            <i class="nb-arrow-right font-w-bold"></i></button>
+          <button nbButton size="xsmall" shape="rectangle" (click)="submitCommonInfo()"
+                  [disabled]="stepperForm.commonInfo.invalid">
+            Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
+          </button>
         </h2>
+
         <form [formGroup]="stepperForm.commonInfo" class="row">
           <div class="col">
             <div class="form-group">
               <label for="plan-title">Tiêu đề</label>
-              <input type="text" class="form-control" id="plan-title"
-                     formControlName="title" [(ngModel)]="plan.name">
-              <div class="text-danger">Trường này không được trống {{ stepperForm.commonInfo.invalid | json }}</div>
+              <input type="text" class="form-control" id="plan-title" formControlName="title"
+                     [class.form-control-danger]="getControl('commonInfo','title').invalid">
+              <ng-container
+                      *ngIf="getControl('commonInfo','title').invalid && getControl('commonInfo','title').touched">
+                <p class="text-danger" *ngIf="getControl('commonInfo','title').hasError('required')">
+                  Trường này không được trống
+                </p>
+              </ng-container>
             </div>
             <div class="form-group">
               <label for="plan-url">URL</label>
-              <input type="text" class="form-control" formControlName="url" id="plan-url" [(ngModel)]="plan.url">
+              <input type="text" class="form-control" id="plan-url" formControlName="url"
+                     [class.form-control-danger]="getControl('commonInfo','url').invalid">
+              <ng-container *ngIf="getControl('commonInfo','url').invalid">
+                <p class="text-danger" *ngIf="getControl('commonInfo','url').hasError('required')">
+                  Trường này không được trống
+                </p>
+              </ng-container>
             </div>
           </div>
         </form>
       </nb-step>
 
+      <!--step 3-->
       <nb-step label="Thời gian" [stepControl]="stepperForm.time">
         <h2>Thời gian
-          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle"><i class="nb-arrow-left font-w-bold"></i>
-            Trước
+          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
+            <i class="nb-arrow-left font-w-bold"></i> Trước
           </button>
-          <button nbButton size="xsmall" nbStepperNext shape="rectangle">Tiếp theo <i
-                  class="nb-arrow-right font-w-bold"></i></button>
+          <button nbButton size="xsmall" shape="rectangle" (click)="submitChooseDate()"
+                  [disabled]="stepperForm.time.invalid">
+            Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
+          </button>
         </h2>
-        <div class="row">
+
+        <form class="row">
           <div class="col">
             <div class="form-group">
               <label for="start-date">Thời điểm khởi hành</label>
-              <input class="form-control" nbInput id="start-date" value="{{ startDate | date }}"
+              <input class="form-control" id="start-date" readonly value="{{ startDate | date }}"
                      type="text" [nbDatepicker]="startDatePicker">
-              <nb-datepicker #startDatePicker (dateChange)="submitChooseDate($event)"></nb-datepicker>
+              <nb-datepicker #startDatePicker (dateChange)="startDate = $event"></nb-datepicker>
             </div>
           </div>
-        </div>
+        </form>
       </nb-step>
 
+      <!--step 4-->
       <nb-step label="Giá và số vé" [stepControl]="stepperForm.priceAndTicket">
         <h2>Giá và số lượng vé
-          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle"><i class="nb-arrow-left font-w-bold"></i>
-            Trước
+          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
+            <i class="nb-arrow-left font-w-bold"></i> Trước
           </button>
-          <button nbButton size="xsmall" nbStepperNext shape="rectangle" (click)="submitPriceAndTicket()">Tiếp theo
-            <i class="nb-arrow-right font-w-bold"></i></button>
+          <button nbButton size="xsmall" shape="rectangle" (click)="submitPriceAndTicket()"
+                  [disabled]="stepperForm.priceAndTicket.invalid">
+            Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
+          </button>
         </h2>
-        <form [formGroup]="stepperForm.priceAndTicket" class="row">
-          <div class="col">
-            <div class="form-group">
-              <label for="adult-price">Giá người lớn (từ đủ 12 tuổi trở lên)</label>
-              <div class="input-group"><input class="form-control" nbInput
-                                              placeholder="Giá vé người lớn"
-                                              id="adult-price" formControlName="adultPrice"
-                                              [(ngModel)]="plan.adultPrice">
-                <span class="input-group-append"><span class="input-group-text">đ</span></span>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="form-group">
-              <label for="child-price">Giá trẻ em</label>
-              <div class="input-group"><input type="number" class="form-control"
-                                              placeholder="Giá vé trẻ em"
-                                              id="child-price" formControlName="childPrice"
-                                              [(ngModel)]="plan.childPrice">
-                <span class="input-group-append"><span class="input-group-text">đ</span></span>
-              </div>
-            </div>
-          </div>
-        </form>
 
-        <form [formGroup]="stepperForm.priceAndTicket" class="row">
-          <div class="col">
-            <div class="form-group">
-              <label for="number-of-reserved-slot">Số vé đã đặt</label>
-              <input class="form-control" placeholder="Số vé đã đặt" id="number-of-reserved-slot" type="number"
-                     nbInput [(ngModel)]="plan.numberOfReservedSlot" formControlName="reversedSlot">
+        <form [formGroup]="stepperForm.priceAndTicket">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="adult-price">Giá người lớn (từ đủ 12 tuổi trở lên)</label>
+                <div class="input-group">
+                  <input class="form-control" placeholder="Giá vé người lớn" id="adult-price" type="number"
+                         formControlName="adultPrice"
+                         [class.form-control-danger]="getControl('priceAndTicket','adultPrice').invalid">
+                  <span class="input-group-append"><span class="input-group-text">đ</span></span>
+                </div>
+                <ng-container
+                        *ngIf="getControl('priceAndTicket','adultPrice').invalid && getControl('priceAndTicket','adultPrice').touched">
+                  <p class="text-danger" *ngIf="getControl('priceAndTicket','adultPrice').hasError('required')">
+                    Trường này không được trống
+                  </p>
+                  <p class="text-danger" *ngIf="getControl('priceAndTicket','adultPrice').errors?.min">
+                    Giá tối thiểu {{ 1000000 | currency: 'VND' }}
+                  </p>
+                </ng-container>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="child-price">Giá trẻ em</label>
+                <div class="input-group">
+                  <input class="form-control" placeholder="Giá vé trẻ em" id="child-price" type="number"
+                         formControlName="childPrice"
+                         [class.form-control-danger]="getControl('priceAndTicket','childPrice').invalid">
+                  <span class="input-group-append"><span class="input-group-text">đ</span></span>
+                </div>
+                <ng-container
+                        *ngIf="getControl('priceAndTicket','childPrice').invalid && getControl('priceAndTicket','childPrice').touched">
+                  <p class="text-danger" *ngIf="getControl('priceAndTicket','childPrice').hasError('required')">
+                    Trường này không được trống
+                  </p>
+                  <p class="text-danger" *ngIf="getControl('priceAndTicket','childPrice').errors?.min">
+                    Giá tối thiểu {{ 1000000 | currency: 'VND' }}
+                  </p>
+                </ng-container>
+              </div>
             </div>
           </div>
-          <div class="col">
-            <div class="form-group">
-              <label for="number-of-slot">Tổng số vé</label>
-              <input type="text" class="form-control" placeholder="Tổng số vé" id="number-of-slot" type="number"
-                     nbInput [(ngModel)]="plan.numberOfSlot" formControlName="totalSlot">
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="number-of-reserved-slot">Số vé đã đặt</label>
+                <input class="form-control" id="number-of-reserved-slot" placeholder="Số vé đã đặt" type="number"
+                       formControlName="reversedSlot"
+                       [class.form-control-danger]="getControl('priceAndTicket','reversedSlot').invalid">
+                <ng-container
+                        *ngIf="getControl('priceAndTicket','reversedSlot').invalid && getControl('priceAndTicket','reversedSlot').touched">
+                  <p class="text-danger" *ngIf="getControl('priceAndTicket','reversedSlot').hasError('required')">
+                    Trường này không được trống
+                  </p>
+                  <p class="text-danger" *ngIf="getControl('priceAndTicket','reversedSlot').errors?.min">
+                    Giá trị tối thiểu là 0
+                  </p>
+                </ng-container>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="number-of-slot">Tổng số vé</label>
+                <input class="form-control" id="number-of-slot" placeholder="Tổng số vé" type="number"
+                       formControlName="totalSlot"
+                       [class.form-control-danger]="getControl('priceAndTicket','totalSlot').invalid">
+                <ng-container
+                        *ngIf="getControl('priceAndTicket','totalSlot').invalid && getControl('priceAndTicket','totalSlot').touched">
+                  <p class="text-danger" *ngIf="getControl('priceAndTicket','totalSlot').hasError('required')">
+                    Trường này không được trống
+                  </p>
+                  <p class="text-danger" *ngIf="getControl('priceAndTicket','totalSlot').errors?.min">
+                    Giá trị tối thiểu là 20
+                  </p>
+                </ng-container>
+              </div>
             </div>
           </div>
         </form>
       </nb-step>
 
+      <!--step 5-->
       <nb-step label="Chọn địa điểm" [stepControl]="stepperForm.choosePlace">
         <h2>Chọn địa điểm
-          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle"><i class="nb-arrow-left font-w-bold"></i>
-            Trước
+          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
+            <i class="nb-arrow-left font-w-bold"></i> Trước
           </button>
-          <button nbButton size="xsmall" nbStepperNext shape="rectangle">Tiếp theo
-            <i class="nb-arrow-right font-w-bold"></i></button>
+          <button nbButton size="xsmall" shape="rectangle" (click)="submitChoosePlaces()"
+                  [disabled]="stepperForm.choosePlace.invalid">
+            Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
+          </button>
         </h2>
-        <form class="row">
+
+        <form class="row" [formGroup]="stepperForm.choosePlace">
           <mat-form-field class="col">
             <mat-chip-list #chipList>
-              <mat-chip *ngFor="let p of choosedPlaces" [selectable]="true" [removable]="true" (removed)="remove(p)">
+              <mat-chip *ngFor="let p of selectedPlaces" [selectable]="true" [removable]="true" (removed)="remove(p)">
                 {{ p?.name }}
                 <mat-icon matChipRemove *ngIf="true">cancel</mat-icon>
               </mat-chip>
@@ -166,7 +234,13 @@
             <input class="form-control w-100" #placeInput [formControl]="inputPlace" [matAutocomplete]="auto"
                    [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                    [matChipInputAddOnBlur]="true">
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+            <ng-container
+                    *ngIf="getControl('choosePlace','places').invalid && inputPlace.touched">
+              <p class="text-danger" *ngIf="getControl('choosePlace','places').hasError('required')">
+                Chọn ít nhất một địa điểm
+              </p>
+            </ng-container>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectItem($event)">
               <mat-option *ngFor="let p of filteredProvinces | async" [value]="p">
                 {{ p?.name }}
               </mat-option>
@@ -175,20 +249,21 @@
         </form>
       </nb-step>
 
+      <!--step 6-->
       <nb-step label="Xác nhận">
         <h2>Xác nhận
-          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle"><i class="nb-arrow-left font-w-bold"></i>
-            Trước
+          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
+            <i class="nb-arrow-left font-w-bold"></i> Trước
           </button>
-          <button nbButton size="xsmall" shape="rectangle" (click)="submitPlanForm()"><i
-                  class="nb-checkmark font-w-bold"></i>
-            Xác nhận
+          <button nbButton size="xsmall" shape="rectangle" (click)="submitPlanForm()">
+            <i class="nb-checkmark font-w-bold"></i> Xác nhận
           </button>
         </h2>
         <div class="overflow-hidden overflow-y">
 
           <div class="row">
             <div class="col container">
+              <label>Tour</label>
               <nb-user size="xlarge"
                        name="#{{ plan.tour.id }} -  {{ plan.tour.name}}"
                        title="{{ plan.tour.numberOfDate }} ngày {{ plan.tour.numberOfNight }} đêm"
@@ -201,14 +276,14 @@
               <div class="form-group">
                 <label for="plan-url-confirm">Tiêu đề</label>
                 <input class="form-control text-hint" id="plan-title-confirm"
-                       type="text" disabled nbInput value="{{ plan?.tour?.name }}">
+                       type="text" disabled value="{{ plan?.tour?.name }}">
               </div>
             </div>
             <div class="col">
               <div class="form-group">
                 <label for="plan-url-confirm">URL</label>
                 <input class="form-control text-hint" id="plan-url-confirm"
-                       type="text" disabled nbInput value="{{ plan?.tour?.name | vtext }}">
+                       type="text" disabled value="{{ plan?.tour?.name | vtext }}">
               </div>
             </div>
           </div>
@@ -218,7 +293,7 @@
               <div class="form-group">
                 <label for="start-date-confirm">Thời điểm khởi hành</label>
                 <input class="form-control text-hint" placeholder="Thời điểm khởi hành" id="start-date-confirm"
-                       type="text" disabled nbInput value="{{ startDate | date }}">
+                       type="text" disabled value="{{ startDate | date }}">
               </div>
             </div>
             <div class="col">
@@ -236,14 +311,14 @@
               <div class="form-group">
                 <label for="adult-price-confirm">Giá người lớn (từ đủ 12 tuổi trở lên)</label>
                 <input class="form-control text-hint" placeholder="Số vé đã đặt" id="adult-price-confirm"
-                       type="text" disabled nbInput [value]="plan.adultPrice">
+                       type="text" disabled [value]="plan.adultPrice">
               </div>
             </div>
             <div class="col">
               <div class="form-group">
                 <label for="child-price-confirm">Giá trẻ em</label>
                 <input class="form-control text-hint" placeholder="Tổng số vé" id="child-price-confirm"
-                       type="text" disabled nbInput [value]="plan.childPrice">
+                       type="text" disabled [value]="plan.childPrice">
               </div>
             </div>
           </div>
@@ -253,14 +328,14 @@
               <div class="form-group">
                 <label for="number-of-reserved-slot-confirm">Số vé đã đặt</label>
                 <input class="form-control text-hint" placeholder="Số vé đã đặt" id="number-of-reserved-slot-confirm"
-                       disabled type="text" nbInput [value]="plan.numberOfReservedSlot">
+                       disabled type="text" [value]="plan.numberOfReservedSlot">
               </div>
             </div>
             <div class="col">
               <div class="form-group">
                 <label for="number-of-slot-confirm">Tổng số vé</label>
                 <input class="form-control text-hint" placeholder="Tổng số vé" id="number-of-slot-confirm"
-                       disabled type="text" nbInput [value]="plan.numberOfSlot">
+                       disabled type="text" [value]="plan.numberOfSlot">
               </div>
             </div>
           </div>
@@ -270,7 +345,7 @@
               <label for="places-confirm">Các địa điểm</label>
               <div id="places-confirm">
                 <mat-chip-list>
-                  <mat-chip [disableRipple]="true" *ngFor="let p of choosedPlaces"> {{ p?.name }}</mat-chip>
+                  <mat-chip [disableRipple]="true" *ngFor="let p of selectedPlaces"> {{ p?.name }}</mat-chip>
                 </mat-chip-list>
               </div>
             </div>

@@ -3,8 +3,8 @@
     <nb-card>
       <nb-card-header>
         <div class="d-flex justify-content-between">
-          <h2>Danh sách plan</h2>
-          <button nbButton size="small">Lập plan mới</button>
+          <h1 class="align-middle">Danh sách plan</h1>
+          <button nbButton size="small" routerLink="add">Lập plan mới</button>
         </div>
       </nb-card-header>
       <div [nbSpinner]="loadingPrevious"></div>
@@ -21,16 +21,12 @@
         <nb-list-item *ngFor="let plan of plans">
           <article>
             <h4>#{{ plan.id }} - {{plan.name}}</h4>
-            <hr/>
-            <small>Thời gian: {{ plan.tour?.numberOfDate }} ngày {{ plan.tour?.numberOfNight }} đêm |
-              Khởi hành: {{ plan.startTime | date}}
-            </small>
-            <br/>
+            <small>Thời gian: {{ plan.tour?.numberOfDate }} ngày {{ plan.tour?.numberOfNight }} đêm </small> -
+            <small>Khởi hành: {{ plan.startTime | date}} </small> -
             <small>Giá {{ plan.adultPrice | currency: 'VND' }} / {{ plan.childPrice | currency: 'VND'}}</small>
             <pre>{{ plan.tour?.description }}</pre>
             <a href="javascript:void(0)" [routerLink]="['/management/plans/edit', plan.id]">Chỉnh sửa </a> |
-            <a href="http://localhost:8080/data/contents/{{ plan.tour?.fileContentUrl }}"
-               target="_blank">Xem trước</a>
+            <a href="javascript:void(0)" [routerLink]="['/management/plans/preview', plan.id]">Xem trước</a>
           </article>
         </nb-list-item>
         <nb-list-item *ngIf="loadError">Sommething went wrong</nb-list-item>
