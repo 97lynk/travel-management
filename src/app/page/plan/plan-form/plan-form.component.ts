@@ -7,7 +7,7 @@ import {Plan} from '../../../data/model/api/plan';
 import {NbCalendarHeaderComponent, NbDialogService, NbStepperComponent} from '@nebular/theme';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map, startWith, tap} from 'rxjs/operators';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material';
@@ -45,6 +45,7 @@ export class PlanFormComponent implements OnInit {
   // tours: Tour[];
   tours: Observable<Tour[]>;
   pagerConfig: PaginationInstance;
+  loading: boolean;
 
   // plan
   plan: Plan;
@@ -69,7 +70,7 @@ export class PlanFormComponent implements OnInit {
 
   // reactive form control
   stepperForm: {
-    _chooseTour: FormGroup,
+    chooseTour: FormGroup,
     commonInfo: FormGroup,
     time: FormGroup,
     priceAndTicket: FormGroup,
@@ -90,6 +91,7 @@ export class PlanFormComponent implements OnInit {
 
     // init variables
     // this.tours = [];
+    this.loading = false;
     this.pagerConfig = {id: 'tour-pager', itemsPerPage: 10, currentPage: 1, totalItems: 0};
     this.provinces = [];
     this.selectedPlaces = [];
@@ -98,7 +100,7 @@ export class PlanFormComponent implements OnInit {
     this.startDate = new Date();
     this.complete = {title: '', message: '', textType: '', icon: ''};
     this.stepperForm = {
-       chooseTour: this.fb.group({
+      chooseTour: this.fb.group({
         tour: ['', Validators.required]
       }),
       commonInfo: this.fb.group({
@@ -202,13 +204,17 @@ export class PlanFormComponent implements OnInit {
     }
   };
 
-  loadTour = (page: number) => this.tourService.getTours(page, 10)
-      .pipe(tap((tours: Tour) => {
-        this.pagerConfig.itemsPerPage = tours.page.size;
-        this.pagerConfig.currentPage = tours.page.number + 1;
-        this.pagerConfig.totalItems = tours.page.totalElements;
-      }), map((tours: Tour) => tours.content));
-
+  loadTour = (page: number) => {
+    this.loading = true;
+    this.tours = of([]);
+    return this.tourService.getTours(page, 10)
+        .pipe(tap((tours: Tour) => {
+          this.pagerConfig.itemsPerPage = tours.page.size;
+          this.pagerConfig.currentPage = tours.page.number + 1;
+          this.pagerConfig.totalItems = tours.page.totalElements;
+          this.loading = false;
+        }), map((tours: Tour) => tours.content));
+  };
   /**
    * complete STEP 1 - choose a tour in list or click button
    * @param tour

@@ -15,62 +15,40 @@
         </div>
 
         <div class="p-1">
+          <nb-card>
+            <nb-card-body>
+              <pagination-template #p="paginationApi" [id]="pagerConfig.id" class="text-center"
+                                   (pageChange)="tours = loadTour($event - 1)">
+                <ul class="ngx-pagination">
+                  <li class="pagination-previous" [class.disabled]="p.isFirstPage()">
+                    <a (click)="p.previous()" *ngIf="!p.isFirstPage()"> Trước</a>
+                    <span *ngIf="p.isFirstPage()"> Trước</span>
+                  </li>
 
-          <pagination-template #p="paginationApi" [id]="pagerConfig.id" class="text-center"
-                               (pageChange)="tours = loadTour($event - 1)">
-            <ul class="ngx-pagination">
-              <li class="pagination-previous" [class.disabled]="p.isFirstPage()">
-                <a (click)="p.previous()" *ngIf="!p.isFirstPage()"> Trước</a>
-                <span *ngIf="p.isFirstPage()"> Trước</span>
-              </li>
+                  <li *ngFor="let page of p.pages">
+                    <a (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}</a>
+                    <span *ngIf="p.getCurrent() === page.value" class="current">{{ page.label }}</span>
+                  </li>
 
-              <li *ngFor="let page of p.pages">
-                <a (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}</a>
-                <span *ngIf="p.getCurrent() === page.value" class="current">{{ page.label }}</span>
-              </li>
+                  <li class="pagination-next" [class.disabled]="p.isLastPage()">
+                    <a (click)="p.next()" *ngIf="!p.isLastPage()"> Tiếp</a>
+                    <span *ngIf="p.isLastPage()"> Tiếp</span>
+                  </li>
+                </ul>
 
-              <li class="pagination-next" [class.disabled]="p.isLastPage()">
-                <a (click)="p.next()" *ngIf="!p.isLastPage()"> Tiếp</a>
-                <span *ngIf="p.isLastPage()"> Tiếp</span>
-              </li>
-            </ul>
-
-          </pagination-template>
-          <nb-accordion>
-            <nb-accordion-item *ngFor="let tour of tours | async | paginate: pagerConfig">
-              <nb-accordion-item-header>
-                <nb-user size="xlarge"
-                         name="#{{ tour.id }} -  {{ tour.name}}"
-                         title="{{ tour.numberOfDate }} ngày {{ tour.numberOfNight }} đêm"
-                         [picture]="tour.imageUrl">
-                </nb-user>
-              </nb-accordion-item-header>
-              <nb-accordion-item-body>
-                <nb-flip-card [showToggleButton]="false" #card class="overflow-hidden"
-                              (mouseover)="card.toggle()" (mouseout)="card.toggle()">
-
-                  <nb-card-front>
-                    <nb-card class="border-0">
-                      <nb-card-body>
-                        <pre type="w">{{ tour.description }}</pre>
-                      </nb-card-body>
-                    </nb-card>
-                  </nb-card-front>
-
-                  <nb-card-back>
-                    <nb-card class="border-0">
-                      <nb-card-body>
-                        <button nbButton size="xsmall" (click)="stepController.step1(tour)" shape="rectangle">
-                          Lập plan
-                        </button>
-                      </nb-card-body>
-                    </nb-card>
-                  </nb-card-back>
-
-                </nb-flip-card>
-              </nb-accordion-item-body>
-            </nb-accordion-item>
-          </nb-accordion>
+              </pagination-template>
+              <nb-list [nbSpinner]="loading" style="min-height: 200px">
+                <nb-list-item *ngFor="let tour of tours | async | paginate: pagerConfig"
+                              (click)="stepController.step1(tour)">
+                  <nb-user size="xlarge"
+                           name="#{{ tour.id }} -  {{ tour.name}}"
+                           title="{{ tour.numberOfDate }} ngày {{ tour.numberOfNight }} đêm"
+                           [picture]="tour.imageUrl">
+                  </nb-user>
+                </nb-list-item>
+              </nb-list>
+            </nb-card-body>
+          </nb-card>
         </div>
       </nb-step>
 
