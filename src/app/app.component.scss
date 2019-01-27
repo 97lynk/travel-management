@@ -1,10 +1,14 @@
 @import 'themes';
 
 @include nb-install-component() {
+
+  /deep/ *:not([class^=mat]):not(.eva):not(i[class~='nb-']) {
+    font-family: nb-theme(font-main);
+  }
+
   /deep/ router-outlet + * {
     display: block;
     animation: fade 1s;
-
     @keyframes fade {
       from {
         opacity: 0;

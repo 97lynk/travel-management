@@ -5,8 +5,13 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
-  MatChipsModule, MatFormFieldModule, MatIconModule,
-  MatInputModule, MatStepperModule, MatAutocompleteModule} from '@angular/material';
+  MatAutocompleteModule,
+  MatChipsModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule,
+  MatStepperModule
+} from '@angular/material';
 import {
   NbAccordionModule,
   NbActionsModule,
@@ -27,6 +32,7 @@ import {
   NbSpinnerModule,
   NbStepperModule,
   NbThemeModule,
+  NbToastrModule,
   NbUserModule
 } from '@nebular/theme';
 import {HomeComponent} from './page/home/home.component';
@@ -51,6 +57,9 @@ import {VTextEncodePipe} from './data/pipe/vtext-encode.pipe';
 import {VDateTimePipe} from './data/pipe/vdate-time.pipe';
 import {registerLocaleData} from '@angular/common';
 import localeVi from '@angular/common/locales/vi';
+import {PlanPreviewComponent} from './page/plan/plan-preview/plan-preview.component';
+import {ConfirmDialogComponent} from './layout/dialog/confirm-dialog.component';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -65,12 +74,15 @@ import localeVi from '@angular/common/locales/vi';
     PlanFormComponent,
 
     VTextEncodePipe,
-    VDateTimePipe
+    VDateTimePipe,
+    PlanPreviewComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule, ReactiveFormsModule,
+    FormsModule,
+    ReactiveFormsModule,//.withConfig({warnOnNgModelWithFormControl: 'never'}),
     BrowserAnimationsModule,
     HttpClientModule,
     NbLayoutModule,
@@ -81,6 +93,8 @@ import localeVi from '@angular/common/locales/vi';
     MatStepperModule,
     MatIconModule,
     MatAutocompleteModule,
+
+    NgxPaginationModule,
 
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
@@ -99,6 +113,7 @@ import localeVi from '@angular/common/locales/vi';
     NbCalendarModule,
     NbDatepickerModule.forRoot(),
     NbDialogModule.forRoot(),
+    NbToastrModule.forRoot(),
     NbAuthModule.forRoot({
 
       strategies: [
@@ -145,9 +160,12 @@ import localeVi from '@angular/common/locales/vi';
   providers: [
     NbSidebarService,
     {provide: NbTokenStorage, useClass: NbTokenLocalStorage},
-    {provide: LOCALE_ID, useValue: 'vi'}
+    {provide: LOCALE_ID, useValue: 'vi'},
+    // {provide: OverlayContainer, useClass: FullscreenOverlayContainer}
+
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [ConfirmDialogComponent]
 })
 export class AppModule {
 

@@ -6,6 +6,7 @@ import {LoginComponent} from './page/login/login.component';
 import {PlanListComponent} from './page/plan/plan-list/plan-list.component';
 import {PlanFormComponent} from './page/plan/plan-form/plan-form.component';
 import {PlanManagementComponent} from './page/plan/plan-management.component';
+import {PlanPreviewComponent} from './page/plan/plan-preview/plan-preview.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -14,7 +15,8 @@ const routes: Routes = [
     children: [
       {path: '', component: PlanListComponent},
       {path: 'edit/:id', component: PlanFormComponent},
-      {path: 'add', component: PlanFormComponent}
+      {path: 'add', component: PlanFormComponent},
+      {path: 'preview/:id', component: PlanPreviewComponent}
     ]
   },
   {

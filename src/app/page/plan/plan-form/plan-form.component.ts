@@ -4,15 +4,17 @@ import {Place} from '../../../data/model/api/place';
 import {Tour} from '../../../data/model/api/tour';
 import {MapService} from '../../../data/service/map.service';
 import {Plan} from '../../../data/model/api/plan';
-import {NbCalendarHeaderComponent, NbStepperComponent} from '@nebular/theme';
+import {NbCalendarHeaderComponent, NbDialogService, NbStepperComponent} from '@nebular/theme';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import {map, startWith, tap} from 'rxjs/operators';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material';
 import {VTextEncodePipe} from '../../../data/pipe/vtext-encode.pipe';
 import {NbDatepickerComponent} from '@nebular/theme/components/datepicker/datepicker.component';
+import {ConfirmDialogComponent} from '../../../layout/dialog/confirm-dialog.component';
+import {PaginationInstance} from 'ngx-pagination';
 
 @Component({
   selector: 'app-plan-form',
@@ -40,11 +42,14 @@ export class PlanFormComponent implements OnInit {
   selectedPlaces: Place[] = [];
 
   // tours to planning
-  tours: Tour[];
+  // tours: Tour[];
+  tours: Observable<Tour[]>;
+  pagerConfig: PaginationInstance;
 
   // plan
   plan: Plan;
 
+  // selected date from datepicker
   startDate: Date;
 
   // true: insert, false: edit
@@ -64,16 +69,17 @@ export class PlanFormComponent implements OnInit {
 
   // reactive form control
   stepperForm: {
-    chooseTour: FormGroup,
+    _chooseTour: FormGroup,
     commonInfo: FormGroup,
     time: FormGroup,
     priceAndTicket: FormGroup,
     choosePlace: FormGroup,
-    // confirm: FormGroup,
+    // confirm: FormGroup
   };
 
   constructor(private tourService: TourService,
               private mapService: MapService,
+              private dialogService: NbDialogService,
               private route: ActivatedRoute,
               private router: Router,
               private vtextPipe: VTextEncodePipe,
@@ -83,16 +89,37 @@ export class PlanFormComponent implements OnInit {
     console.log('PLAN FORM: locale_id =', localeId);
 
     // init variables
-    this.tours = [];
+    // this.tours = [];
+    this.pagerConfig = {id: 'tour-pager', itemsPerPage: 10, currentPage: 1, totalItems: 0};
     this.provinces = [];
     this.selectedPlaces = [];
     this.plan = new Plan();
     this.INSERT_MODE = true;
-    this.complete = {
-      title: '',
-      message: '',
-      textType: '',
-      icon: ''
+    this.startDate = new Date();
+    this.complete = {title: '', message: '', textType: '', icon: ''};
+    this.stepperForm = {
+       chooseTour: this.fb.group({
+        tour: ['', Validators.required]
+      }),
+      commonInfo: this.fb.group({
+        title: ['', Validators.required],
+        url: ['', Validators.required],
+      }),
+      time: this.fb.group({
+        time: [new Date(), Validators.required]
+      }),
+      priceAndTicket: this.fb.group({
+        adultPrice: [0, [Validators.min(1000000), Validators.required]],
+        childPrice: [0, [Validators.min(1000000), Validators.required]],
+        reversedSlot: [0, [Validators.min(0), Validators.required]],
+        totalSlot: [0, [Validators.min(20), Validators.required]]
+      }),
+      choosePlace: this.fb.group({
+        places: [[], Validators.required]
+      }),
+      // confirm: this.fb.group({
+      //   confirm: ['', Validators.required]
+      // })
     };
   }
 
@@ -102,20 +129,28 @@ export class PlanFormComponent implements OnInit {
     const url = this.route.snapshot.url.join('/');
     this.planId = Number(id);
 
-    console.log(id, this.planId);
+    // load list tour
+    this.tours = this.loadTour(0);
 
-    this.tourService.getTours(0, 10).subscribe((tours: Tour) => this.tours = tours.content);
+    // load all place
     this.mapService.getPlaces().subscribe((places: Place) => this.provinces = places.content);
 
-    // check this page for edit/add
+    // check valid this page for  edit/add
     if (url.indexOf('edit') !== -1) {
       // for add a new plan
       if (Number.isNaN(this.planId)) this.router.navigate(['/management/plans', 'add']);
       else { // for edit plan
-        this.tourService.getPlanById(this.planId, ['tour', 'places']).subscribe((plan: Plan) => this.plan = plan);
+        this.tourService.getPlanById(this.planId, ['tour', 'places']).subscribe((plan: Plan) => {
+          this.plan = plan;
+
+          this._chooseTour(plan.tour);
+          this._submitCommonInfo();
+          this._submitChooseDate();
+          this._submitPriceAndTicket();
+          this._submitChoosePlaces();
+        });
         this.INSERT_MODE = false;
       }
-
     } else if (url.indexOf('add') !== -1) this.INSERT_MODE = true;
 
     console.log('PLAN FORM: mode =', (this.INSERT_MODE) ? 'INSERT' : 'EDIT');
@@ -125,48 +160,61 @@ export class PlanFormComponent implements OnInit {
         startWith(''),
         map((input: string | Place | null) => input ? this._filterStates(input) : this.provinces.slice())
     );
-
-    // if (this.INSERT_MODE)
-    this.stepperForm = {
-      chooseTour: this.fb.group({
-        tour: ['', Validators.required]
-      }),
-      commonInfo: this.fb.group({
-        title: ['', Validators.required],
-        url: ['', Validators.required],
-      }),
-      time: this.fb.group({
-        time: ['', Validators.required]
-      }),
-      priceAndTicket: this.fb.group({
-        adultPrice: [1000000, [Validators.min(1000000), Validators.required]],
-        childPrice: [1000000, [Validators.min(1000000), Validators.required]],
-        reversedSlot: [0, [Validators.min(0), Validators.required]],
-        totalSlot: [20, [Validators.min(20), Validators.required]]
-      }),
-      choosePlace: this.fb.group({
-        places: [[], Validators.required]
-      })
-    };
-    // else
-    //   this.stepperForm = {
-    //     chooseTour: this.fb.group({tour: ['']}),
-    //     commonInfo: this.fb.group({title: [''], url: [''],}),
-    //     time: this.fb.group({time: ['']}),
-    //     priceAndTicket: this.fb.group({
-    //       adultPrice: [0], childPrice: [0],
-    //       reversedSlot: [0], totalSlot: [0]
-    //     }),
-    //     choosePlace: this.fb.group({places: [[]]})
-    //   };
   }
 
+  stepController = {
+    step1: (tour: Tour) => {
+      this._chooseTour(tour);
+      this.planStepper.next();
+      console.log('complete step 1: ', JSON.stringify(tour, null, 2));
+    },
+    step2: () => {
+      this._submitCommonInfo();
+      this.planStepper.next();
+      console.log('complete step 2: ', this.stepperForm.commonInfo.value);
+    },
+    step3: () => {
+      this._submitChooseDate();
+      this.planStepper.next();
+      console.log('complete step 3: ', this.stepperForm.time.value);
+    },
+    step4: () => {
+      this._submitPriceAndTicket();
+      this.planStepper.next();
+      console.log('complete step 4: ', this.stepperForm.priceAndTicket.value);
+    },
+    step5: () => {
+      this._submitChoosePlaces();
+      this.planStepper.next();
+      console.log('complete step 5: ', this.stepperForm.choosePlace.value);
+    },
+    step6: () => {
+      const dialog = this.dialogService.open(ConfirmDialogComponent);
+      dialog.componentRef.instance.config = {
+        title: (this.INSERT_MODE) ? 'Thêm plan' : 'Sửa plan',
+        message: (this.INSERT_MODE) ? 'Lưu plan mới?' : `Lưu thay đổi Plan#${this.planId}?`,
+        leftButton: {status: 'secondary', label: 'Hủy', return: false},
+        rightButton: {status: 'primary', label: 'Lưu', return: true}
+      };
+      dialog.onClose.subscribe(value => {
+        if (value) this._submitPlanForm();
+      });
+    }
+  };
+
+  loadTour = (page: number) => this.tourService.getTours(page, 10)
+      .pipe(tap((tours: Tour) => {
+        this.pagerConfig.itemsPerPage = tours.page.size;
+        this.pagerConfig.currentPage = tours.page.number + 1;
+        this.pagerConfig.totalItems = tours.page.totalElements;
+      }), map((tours: Tour) => tours.content));
+
   /**
-   * choose a tour in list or click button
+   * complete STEP 1 - choose a tour in list or click button
    * @param tour
    * @param isOldTour
    */
-  chooseTour(tour: Tour, isOldTour) {
+  private _chooseTour = (tour: Tour) => {
     // set selected tour
     this.stepperForm.chooseTour.setValue({tour: tour});
 
@@ -178,30 +226,27 @@ export class PlanFormComponent implements OnInit {
     this.stepperForm.commonInfo.get('title').valueChanges.subscribe(value => {
       this.stepperForm.commonInfo.get('url').setValue(this.vtextPipe.transform(value));
     });
+  };
 
-    this.planStepper.next();
-    console.log('complete step 1: ', JSON.stringify(tour, null, 2));
-  }
-
-  submitCommonInfo = () => {
+  /**
+   * complete STEP 2
+   */
+  private _submitCommonInfo = () => {
     // preparing next step
-    // this.startDatePicker.min = new Date(); // min is today
-
     if (this.INSERT_MODE) {
-      const tomorrow = Date.now() + 24 * 60 * 60 * 1000;
+      const tomorrow = Date.now() + 24 * 60 * 60 * 1000;// timestamp
       this.startDate = new Date(tomorrow);
-    } else {
+    } else
       this.startDate = new Date(this.plan.startTime);
-    }
 
     this.startDatePicker.value = this.startDate;
     this.stepperForm.time.setValue({time: this.startDate});
-
-    this.planStepper.next();
-    console.log('complete step 2: ', this.stepperForm.commonInfo.value);
   };
 
-  submitChooseDate = () => {
+  /**
+   * complete STEP3
+   */
+  private _submitChooseDate = () => {
     // set selected date
     this.stepperForm.time.setValue({time: this.startDate});
 
@@ -221,15 +266,12 @@ export class PlanFormComponent implements OnInit {
         totalSlot: this.plan.numberOfSlot
       });
     }
-
-    this.planStepper.next();
-    console.log('complete step 3: ', this.stepperForm.time.value);
   };
 
   /**
-   * submit price and ticket
+   * complete STEP4
    */
-  submitPriceAndTicket = () => {
+  private _submitPriceAndTicket = () => {
     // prepare next step
     if (!this.INSERT_MODE) {
       // push places in response data to seclected list
@@ -241,18 +283,18 @@ export class PlanFormComponent implements OnInit {
 
       this.stepperForm.choosePlace.setValue({places: this.selectedPlaces});
     }
-
-    this.planStepper.next();
-    console.log('complete step 4: ', this.stepperForm.priceAndTicket.value);
   };
 
-  submitChoosePlaces = () => {
+  /**
+   * complete STEP 5
+   */
+  private _submitChoosePlaces = () => {
     // set selected places
     this.stepperForm.choosePlace.setValue({places: this.selectedPlaces});
 
     // prepare for last step
     this.plan = new Plan();
-    this.plan.id = 0;
+    this.plan.id = this.planId;
     this.plan.tour = this.getControl('chooseTour', 'tour').value;
     this.plan.name = this.getControl('commonInfo', 'title').value;
     this.plan.url = this.getControl('commonInfo', 'url').value;
@@ -264,15 +306,13 @@ export class PlanFormComponent implements OnInit {
     this.plan['tourId'] = this.plan.tour.id;
     this.plan.placeIds = this.getControl('choosePlace', 'places').value.map(p => p.id);
 
-    this.planStepper.next();
-    console.log('complete step 5: ', this.stepperForm.choosePlace.value);
+    // this.stepperForm.confirm.setValue({'confirm': 'OK'});
   };
 
   /**
-   * submit to complete stepper
+   * complete STEP 6 - submit to complete stepper
    */
-  submitPlanForm() {
-
+  private _submitPlanForm = () => {
     if (this.INSERT_MODE)
       this.tourService.addNewPlan(this.plan)
           .subscribe(
@@ -315,8 +355,14 @@ export class PlanFormComponent implements OnInit {
                 };
                 this.planStepper.next();
               });
-  }
+  };
 
+  /**
+   * get form control in stepperForm
+   * @param {string} group
+   * @param {string} control
+   * @returns {any}
+   */
   getControl = (group: string, control: string) => this.stepperForm[group].get(control);
 
   /**

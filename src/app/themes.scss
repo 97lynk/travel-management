@@ -4,7 +4,7 @@
 @import '~@nebular/theme/styles/themes';
 
 // which themes you what to enable (empty to enable all)
-$nb-enabled-themes: (default, corporate);
+$nb-enabled-themes: (corporate);
 
 $nb-themes: nb-register-theme((
   // app wise variables for each theme
@@ -94,4 +94,9 @@ $nb-themes: nb-register-theme((
   ecommerce-card-border-width: 1px,
 
   progress-bar-background: linear-gradient(90deg, #ff9f6f 0%, #ff8b97 100%),
+
+  // customize
+  header-fg: #181818,
+  header-bg: #e3e9ee
+
 ), corporate, corporate);

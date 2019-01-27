@@ -48,10 +48,10 @@ export class TourService {
   loadContentPostOfTour = (url: string): Observable<string> =>
       this.http.get(`${environment.apiHost}/data/contents/${url}`, {responseType: 'text'});
 
-  updatePlanById = (id: number | string, plan: Plan) =>
-    this.http.put<Plan>(`${this.PLAN_API_URL}/${id}`, plan);
+  updatePlanById = (id: number | string, plan: Plan) => this.http.put<Plan>(`${this.PLAN_API_URL}/${id}`, plan);
 
-  addNewPlan = (plan: Plan) =>
-    this.http.post<Plan>(this.PLAN_API_URL, plan);
+  addNewPlan = (plan: Plan) => this.http.post<Plan>(this.PLAN_API_URL, plan);
+
+  deletePlanById = (id: number) => this.http.delete<Plan>(`${this.PLAN_API_URL}/${id}`);
 
 }

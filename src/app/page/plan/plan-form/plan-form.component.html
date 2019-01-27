@@ -1,4 +1,4 @@
-<nb-card size="large">
+<nb-card class="h-100">
   <nb-card-header *ngIf="INSERT_MODE" class="border-bottom">Lập plan mới</nb-card-header>
   <nb-card-header *ngIf="!INSERT_MODE" class="border-bottom">Chỉnh sửa plan #{{ plan.id }}</nb-card-header>
   <nb-card-body class="mt-0">
@@ -6,16 +6,38 @@
 
       <!--step 1-->
       <nb-step label="Chọn tour" [stepControl]="stepperForm.chooseTour">
-        <h2>Chọn tour
+        <div class="d-flex flex-wrap align-content-start">
+          <h2>Chọn tour</h2>
           <button nbButton size="xsmall" [hidden]="INSERT_MODE"
-                  shape="rectangle" (click)="chooseTour(plan.tour, true)">Chọn tour cũ
+                  shape="rectangle" (click)="stepController.step1(plan.tour)">Chọn tour cũ
             <i class="nb-arrow-right font-w-bold"></i>
           </button>
-        </h2>
+        </div>
 
-        <div class="h-auto p-1">
+        <div class="p-1">
+
+          <pagination-template #p="paginationApi" [id]="pagerConfig.id" class="text-center"
+                               (pageChange)="tours = loadTour($event - 1)">
+            <ul class="ngx-pagination">
+              <li class="pagination-previous" [class.disabled]="p.isFirstPage()">
+                <a (click)="p.previous()" *ngIf="!p.isFirstPage()"> Trước</a>
+                <span *ngIf="p.isFirstPage()"> Trước</span>
+              </li>
+
+              <li *ngFor="let page of p.pages">
+                <a (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}</a>
+                <span *ngIf="p.getCurrent() === page.value" class="current">{{ page.label }}</span>
+              </li>
+
+              <li class="pagination-next" [class.disabled]="p.isLastPage()">
+                <a (click)="p.next()" *ngIf="!p.isLastPage()"> Tiếp</a>
+                <span *ngIf="p.isLastPage()"> Tiếp</span>
+              </li>
+            </ul>
+
+          </pagination-template>
           <nb-accordion>
-            <nb-accordion-item *ngFor="let tour of tours">
+            <nb-accordion-item *ngFor="let tour of tours | async | paginate: pagerConfig">
               <nb-accordion-item-header>
                 <nb-user size="xlarge"
                          name="#{{ tour.id }} -  {{ tour.name}}"
@@ -38,7 +60,7 @@
                   <nb-card-back>
                     <nb-card class="border-0">
                       <nb-card-body>
-                        <button nbButton size="xsmall" (click)="chooseTour(tour, false)" shape="rectangle">
+                        <button nbButton size="xsmall" (click)="stepController.step1(tour)" shape="rectangle">
                           Lập plan
                         </button>
                       </nb-card-body>
@@ -54,15 +76,18 @@
 
       <!--step 2-->
       <nb-step label="Thông tin chung" [stepControl]="stepperForm.commonInfo">
-        <h2>Thiết lập thông tin
-          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
-            <i class="nb-arrow-left font-w-bold"></i> Trước
-          </button>
-          <button nbButton size="xsmall" shape="rectangle" (click)="submitCommonInfo()"
-                  [disabled]="stepperForm.commonInfo.invalid">
-            Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
-          </button>
-        </h2>
+        <div class="d-flex flex-wrap align-content-start">
+          <h2>Thiết lập thông tin</h2>
+          <div>
+            <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
+              <i class="nb-arrow-left font-w-bold"></i> Trước
+            </button>
+            <button nbButton size="xsmall" shape="rectangle" (click)="stepController.step2()"
+                    [disabled]="stepperForm.commonInfo.invalid">
+              Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
+            </button>
+          </div>
+        </div>
 
         <form [formGroup]="stepperForm.commonInfo" class="row">
           <div class="col">
@@ -93,15 +118,19 @@
 
       <!--step 3-->
       <nb-step label="Thời gian" [stepControl]="stepperForm.time">
-        <h2>Thời gian
-          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
-            <i class="nb-arrow-left font-w-bold"></i> Trước
-          </button>
-          <button nbButton size="xsmall" shape="rectangle" (click)="submitChooseDate()"
-                  [disabled]="stepperForm.time.invalid">
-            Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
-          </button>
-        </h2>
+        <div class="d-flex flex-wrap align-content-start">
+          <h2>Thời gian</h2>
+          <div>
+            <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
+              <i class="nb-arrow-left font-w-bold"></i> Trước
+            </button>
+            <button nbButton size="xsmall" shape="rectangle" (click)="stepController.step3()"
+                    [disabled]="stepperForm.time.invalid">
+              Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
+            </button>
+          </div>
+        </div>
+
 
         <form class="row">
           <div class="col">
@@ -117,15 +146,18 @@
 
       <!--step 4-->
       <nb-step label="Giá và số vé" [stepControl]="stepperForm.priceAndTicket">
-        <h2>Giá và số lượng vé
-          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
-            <i class="nb-arrow-left font-w-bold"></i> Trước
-          </button>
-          <button nbButton size="xsmall" shape="rectangle" (click)="submitPriceAndTicket()"
-                  [disabled]="stepperForm.priceAndTicket.invalid">
-            Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
-          </button>
-        </h2>
+        <div class="d-flex flex-wrap align-content-start">
+          <h2>Giá và số lượng vé</h2>
+          <div>
+            <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
+              <i class="nb-arrow-left font-w-bold"></i> Trước
+            </button>
+            <button nbButton size="xsmall" shape="rectangle" (click)="stepController.step4()"
+                    [disabled]="stepperForm.priceAndTicket.invalid">
+              Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
+            </button>
+          </div>
+        </div>
 
         <form [formGroup]="stepperForm.priceAndTicket">
           <div class="row">
@@ -212,15 +244,18 @@
 
       <!--step 5-->
       <nb-step label="Chọn địa điểm" [stepControl]="stepperForm.choosePlace">
-        <h2>Chọn địa điểm
-          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
-            <i class="nb-arrow-left font-w-bold"></i> Trước
-          </button>
-          <button nbButton size="xsmall" shape="rectangle" (click)="submitChoosePlaces()"
-                  [disabled]="stepperForm.choosePlace.invalid">
-            Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
-          </button>
-        </h2>
+        <div class="d-flex flex-wrap align-content-start">
+          <h2>Chọn địa điểm</h2>
+          <div>
+            <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
+              <i class="nb-arrow-left font-w-bold"></i> Trước
+            </button>
+            <button nbButton size="xsmall" shape="rectangle" (click)="stepController.step5()"
+                    [disabled]="stepperForm.choosePlace.invalid">
+              Tiếp theo <i class="nb-arrow-right font-w-bold"></i>
+            </button>
+          </div>
+        </div>
 
         <form class="row" [formGroup]="stepperForm.choosePlace">
           <mat-form-field class="col">
@@ -250,22 +285,24 @@
       </nb-step>
 
       <!--step 6-->
-      <nb-step label="Xác nhận">
-        <h2>Xác nhận
-          <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
-            <i class="nb-arrow-left font-w-bold"></i> Trước
-          </button>
-          <button nbButton size="xsmall" shape="rectangle" (click)="submitPlanForm()">
-            <i class="nb-checkmark font-w-bold"></i> Xác nhận
-          </button>
-        </h2>
-        <div class="overflow-hidden overflow-y">
+      <nb-step label="Xác nhận" [stepControl]="stepperForm.confirm">
+        <div class="d-flex flex-wrap align-content-start">
+          <h2>Xác nhận</h2>
+          <div>
+            <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
+              <i class="nb-arrow-left font-w-bold"></i> Trước
+            </button>
+            <button nbButton size="xsmall" shape="rectangle" (click)="stepController.step6()">
+              <i class="nb-checkmark font-w-bold"></i> Xác nhận
+            </button>
+          </div>
+        </div>
 
+        <div class="overflow-hidden overflow-y">
           <div class="row">
             <div class="col container">
               <label>Tour</label>
-              <nb-user size="xlarge"
-                       name="#{{ plan.tour.id }} -  {{ plan.tour.name}}"
+              <nb-user size="xlarge" name="#{{ plan.tour.id }} -  {{ plan.tour.name}}"
                        title="{{ plan.tour.numberOfDate }} ngày {{ plan.tour.numberOfNight }} đêm"
                        [picture]="plan.tour.imageUrl"></nb-user>
             </div>

@@ -2,9 +2,9 @@
   <div class="col">
     <nb-card>
       <nb-card-header>
-        <div class="d-flex justify-content-between">
-          <h1 class="align-middle">Danh sách plan</h1>
-          <button nbButton size="small" routerLink="add">Lập plan mới</button>
+        <div class="d-flex justify-content-between align-items-center">
+          <span>Danh sách plan</span>
+          <button nbButton size="xsmall" shape="rectangle" routerLink="add">Lập plan mới</button>
         </div>
       </nb-card-header>
       <div [nbSpinner]="loadingPrevious"></div>
@@ -21,12 +21,17 @@
         <nb-list-item *ngFor="let plan of plans">
           <article>
             <h4>#{{ plan.id }} - {{plan.name}}</h4>
-            <small>Thời gian: {{ plan.tour?.numberOfDate }} ngày {{ plan.tour?.numberOfNight }} đêm </small> -
-            <small>Khởi hành: {{ plan.startTime | date}} </small> -
+            <small>Thời gian: {{ plan.tour?.numberOfDate }} ngày {{ plan.tour?.numberOfNight }} đêm</small>
+            -
+            <small>Khởi hành: {{ plan.startTime | date}}</small>
+            -
             <small>Giá {{ plan.adultPrice | currency: 'VND' }} / {{ plan.childPrice | currency: 'VND'}}</small>
             <pre>{{ plan.tour?.description }}</pre>
-            <a href="javascript:void(0)" [routerLink]="['/management/plans/edit', plan.id]">Chỉnh sửa </a> |
-            <a href="javascript:void(0)" [routerLink]="['/management/plans/preview', plan.id]">Xem trước</a>
+            <a href="javascript:void(0)" class="text-warning font-w-bold"
+               [routerLink]="['/management/plans/edit', plan.id]">Chỉnh sửa </a> |
+            <a href="javascript:void(0)" class="text-danger font-w-bold" (click)="confirmDeletePlan(plan.id)">Xóa </a> |
+            <a href="javascript:void(0)" class="text-success font-w-bold"
+               [routerLink]="['/management/plans/preview', plan.id]">Xem trước</a>
           </article>
         </nb-list-item>
         <nb-list-item *ngIf="loadError">Sommething went wrong</nb-list-item>
@@ -40,3 +45,21 @@
     </nb-card>
   </div>
 </div>
+
+
+<!--&lt;!&ndash;Confirmimg delete a plan dialog&ndash;&gt;-->
+<!--<ng-template #dialog let-data let-ref="dialogRef">-->
+  <!--<nb-card style="width: 300px">-->
+    <!--<nb-card-header class="p-3 pr-2 border-bottom d-flex justify-content-between">-->
+      <!--<h3>Xóa plan</h3>-->
+      <!--<span class="p-1" (click)="ref.close()">-->
+        <!--<i class="nb-close font-w-bold" style="font-size: 2rem"></i>-->
+      <!--</span>-->
+    <!--</nb-card-header>-->
+    <!--<nb-card-body>Bạn có muốn xóa Plan#{{ data.planId }}?</nb-card-body>-->
+    <!--<nb-card-footer class="p-2 d-flex justify-content-end">-->
+      <!--<button nbButton shape="rectangle" (click)="ref.close()" size="xsmall">Hủy</button>-->
+      <!--<button nbButton (click)="ref.close(data.planId)" status="danger" size="xsmall" shape="rectangle">Xóa</button>-->
+    <!--</nb-card-footer>-->
+  <!--</nb-card>-->
+<!--</ng-template>-->
