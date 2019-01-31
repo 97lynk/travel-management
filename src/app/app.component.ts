@@ -3,7 +3,30 @@ import {NbMenuItem} from '@nebular/theme';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  template: `
+      <nb-layout windowMode>
+          <!--HEADER-->
+          <nb-layout-header fixed>
+              <app-header></app-header>
+          </nb-layout-header>
+
+          <!--SIDEBAR-->
+          <nb-sidebar tag="menu">
+              <nb-menu [items]="MENU_ITEMS" autoCollapse="false">
+              </nb-menu>
+          </nb-sidebar>
+
+          <!--MAIN PANEL-->
+          <nb-layout-column>
+              <router-outlet></router-outlet>
+          </nb-layout-column>
+
+          <!--FOOTER-->
+          <!--<nb-layout-footer fixed>-->
+          <!--<app-footer></app-footer>-->
+          <!--</nb-layout-footer>-->
+      </nb-layout>
+  `,
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
