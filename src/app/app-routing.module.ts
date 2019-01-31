@@ -1,24 +1,12 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {ExtraOptions, RouterModule, Routes} from '@angular/router';
 import {HomeComponent} from './page/home/home.component';
 import {NbAuthComponent, NbLogoutComponent, NbRegisterComponent, NbRequestPasswordComponent, NbResetPasswordComponent} from '@nebular/auth';
 import {LoginComponent} from './page/login/login.component';
-import {PlanListComponent} from './page/plan/plan-list/plan-list.component';
-import {PlanFormComponent} from './page/plan/plan-form/plan-form.component';
-import {PlanManagementComponent} from './page/plan/plan-management.component';
-import {PlanPreviewComponent} from './page/plan/plan-preview/plan-preview.component';
 
 const routes: Routes = [
+  {path: 'management', loadChildren: 'app/page/plan/plan.module.ts#PlanModule'},
   {path: '', component: HomeComponent},
-  {
-    path: 'management/plans', component: PlanManagementComponent,
-    children: [
-      {path: '', component: PlanListComponent},
-      {path: 'edit/:id', component: PlanFormComponent},
-      {path: 'add', component: PlanFormComponent},
-      {path: 'preview/:id', component: PlanPreviewComponent}
-    ]
-  },
   {
     path: 'auth', component: NbAuthComponent,
     children: [
@@ -34,8 +22,12 @@ const routes: Routes = [
   {path: '**', redirectTo: ''},
 ];
 
+const config: ExtraOptions = {
+  useHash: true,
+};
+
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, config)],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
