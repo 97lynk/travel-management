@@ -1,14 +1,36 @@
 import {
   NbAccordionModule,
   NbActionsModule,
-  NbAlertModule, NbButtonModule,
-  NbCalendarKitModule, NbCalendarModule, NbCalendarRangeModule,
+  NbAlertModule,
+  NbButtonModule,
+  NbCalendarKitModule,
+  NbCalendarModule,
+  NbCalendarRangeModule,
   NbCardModule,
-  NbChatModule, NbCheckboxModule, NbContextMenuModule, NbDatepickerModule, NbDialogModule, NbInputModule,
-  NbLayoutModule, NbListModule, NbMenuModule, NbPopoverModule, NbProgressBarModule, NbRadioModule,
-  NbRouteTabsetModule, NbSearchModule, NbSelectModule, NbSidebarModule, NbSpinnerModule, NbStepperModule,
-  NbTabsetModule, NbThemeModule, NbToastrModule,
-  NbTooltipModule, NbUserModule, NbWindowModule
+  NbChatModule,
+  NbCheckboxModule,
+  NbContextMenuModule,
+  NbDatepickerModule,
+  NbDialogModule,
+  NbInputModule,
+  NbLayoutModule,
+  NbListModule,
+  NbMenuModule,
+  NbPopoverModule,
+  NbProgressBarModule,
+  NbRadioModule,
+  NbRouteTabsetModule,
+  NbSearchModule,
+  NbSelectModule,
+  NbSidebarModule,
+  NbSpinnerModule,
+  NbStepperModule,
+  NbTabsetModule,
+  NbThemeModule,
+  NbToastrModule,
+  NbTooltipModule,
+  NbUserModule,
+  NbWindowModule
 } from '@nebular/theme';
 
 import {NbSecurityModule} from '@nebular/security';
@@ -29,6 +51,16 @@ import {PlanPreviewComponent} from './page/plan/plan-preview/plan-preview.compon
 import {ConfirmDialogComponent} from './layout/dialog/confirm-dialog.component';
 import {VTextEncodePipe} from './data/pipe/vtext-encode.pipe';
 import {VDateTimePipe} from './data/pipe/vdate-time.pipe';
+import {
+  MatAutocompleteModule,
+  MatChipsModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule,
+  MatStepperModule
+} from '@angular/material';
+import {NgxPaginationModule} from 'ngx-pagination';
+import {NbCardHeaderComponent} from '@nebular/theme/components/card/card.component';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
 
@@ -64,8 +96,19 @@ const NB_MODULES = [
   NbSelectModule,
   NbChatModule,
   NbTooltipModule,
-  NbCalendarKitModule,
+  NbCalendarKitModule
 ];
+
+const MAT_MODULES = [
+  MatChipsModule,
+  MatInputModule,
+  MatFormFieldModule,
+  MatStepperModule,
+  MatIconModule,
+  MatAutocompleteModule
+];
+
+const OTHER_MODULES = [NgxPaginationModule];
 
 const COMPONENTS = [
   HeaderComponent,
@@ -73,21 +116,21 @@ const COMPONENTS = [
   HomeComponent,
   LoginComponent,
 
-  PlanManagementComponent,
-  PlanListComponent,
-  PlanFormComponent,
+  // PlanManagementComponent,
+  // PlanListComponent,
+  // PlanFormComponent,
+  // PlanPreviewComponent,
 
-  PlanPreviewComponent,
   ConfirmDialogComponent
 ];
 
 const ENTRY_COMPONENTS = [
-  ConfirmDialogComponent,
+  ConfirmDialogComponent
 ];
 
 const PIPES = [
   VTextEncodePipe,
-  VDateTimePipe,
+  VDateTimePipe
 ];
 
 const NB_THEME_PROVIDERS = [
@@ -95,30 +138,30 @@ const NB_THEME_PROVIDERS = [
       {
         name: 'corporate',
       },
-      [ CORPORATE_THEME ],
+      [CORPORATE_THEME]
   ).providers,
   ...NbSidebarModule.forRoot().providers,
   ...NbMenuModule.forRoot().providers,
   ...NbDatepickerModule.forRoot().providers,
   ...NbDialogModule.forRoot().providers,
   ...NbWindowModule.forRoot().providers,
-  ...NbToastrModule.forRoot().providers,
+  ...NbToastrModule.forRoot().providers
   // ...NbChatModule.forRoot({
   //   messageGoogleMapKey: 'AIzaSyA_wNuCzia92MAmdLRzmqitRGvCF7wCZPY',
   // }).providers,
 ];
 
 @NgModule({
-  imports: [...BASE_MODULES, ...NB_MODULES],
-  exports: [...BASE_MODULES, ...NB_MODULES, ...COMPONENTS, ...PIPES],
+  imports: [...BASE_MODULES, ...NB_MODULES, ...MAT_MODULES, ...OTHER_MODULES],
+  exports: [...BASE_MODULES, ...NB_MODULES, ...MAT_MODULES, ...OTHER_MODULES, ...COMPONENTS, ...PIPES],
   declarations: [...COMPONENTS, ...PIPES],
-  entryComponents: [...ENTRY_COMPONENTS],
+  entryComponents: [...ENTRY_COMPONENTS]
 })
 export class ThemeModule {
   static forRoot(): ModuleWithProviders {
     return <ModuleWithProviders>{
       ngModule: ThemeModule,
-      providers: [...NB_THEME_PROVIDERS],
+      providers: [...NB_THEME_PROVIDERS]
     };
   }
 }

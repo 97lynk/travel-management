@@ -24,7 +24,7 @@ import {NbDialogRef} from '@nebular/theme';
 })
 export class ConfirmDialogComponent {
 
-  @Input('config') config: {
+  @Input() config: {
     title: string,
     message: string,
     leftButton: {

@@ -5,8 +5,8 @@ import {NbAuthComponent, NbLogoutComponent, NbRegisterComponent, NbRequestPasswo
 import {LoginComponent} from './page/login/login.component';
 
 const routes: Routes = [
-  {path: 'management', loadChildren: 'app/page/plan/plan.module.ts#PlanModule'},
-  {path: '', component: HomeComponent},
+  {path: 'management/plans', loadChildren: './page/plan/plan.module#PlanModule'},
+  {path: 'home', component: HomeComponent},
   {
     path: 'auth', component: NbAuthComponent,
     children: [
@@ -16,10 +16,10 @@ const routes: Routes = [
       {path: 'logout', component: NbLogoutComponent},
       {path: 'request-password', component: NbRequestPasswordComponent},
       {path: 'reset-password', component: NbResetPasswordComponent},
-    ],
+    ]
   },
   {path: '', redirectTo: '', pathMatch: 'full'},
-  {path: '**', redirectTo: ''},
+  {path: '**', redirectTo: ''}
 ];
 
 const config: ExtraOptions = {
@@ -27,7 +27,7 @@ const config: ExtraOptions = {
 };
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, config)],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
