@@ -12,11 +12,11 @@ import {NbDialogRef} from '@nebular/theme';
       </nb-card-header>
       <nb-card-body>{{ config.message }}</nb-card-body>
       <nb-card-footer class="p-2 d-flex justify-content-end">
-        <button nbButton size="xsmall" shape="rectangle" [status]="config.leftButton.status" (click)="ref.close(config.leftButton.return)">
-          {{ config.leftButton.label }}
+        <button nbButton size="xsmall" shape="rectangle" [status]="config.leftButton.status"
+                (click)="ref.close(config.leftButton.return)">{{ config.leftButton.label }}
         </button>
-        <button nbButton size="xsmall" shape="rectangle" [status]="config.rightButton.status" (click)="ref.close(config.rightButton.return)">
-          {{ config.rightButton.label }}
+        <button nbButton size="xsmall" shape="rectangle" [status]="config.rightButton.status"
+                (click)="ref.close(config.rightButton.return)">{{ config.rightButton.label }}
         </button>
       </nb-card-footer>
     </nb-card>

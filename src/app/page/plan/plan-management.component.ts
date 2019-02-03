@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 @Component({
-  selector: 'app-plan-management',
+  selector: 'travel-plan-management',
   template: `
     <router-outlet></router-outlet>
   `,

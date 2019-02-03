@@ -1,15 +1,12 @@
 import {ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {
-  NbAuthModule,
-  NbAuthOAuth2JWTToken,
-  NbOAuth2AuthStrategy,
-  NbOAuth2ClientAuthMethod,
-  NbOAuth2GrantType
-} from '@nebular/auth';
+import {NbAuthModule, NbAuthOAuth2JWTToken, NbOAuth2AuthStrategy, NbOAuth2ClientAuthMethod, NbOAuth2GrantType} from '@nebular/auth';
 import {throwIfAlreadyLoaded} from './module-import-guard';
 import {environment} from '../environments/environment';
 import {NbSidebarService} from '@nebular/theme';
+import {TourService} from './data/service/tour.service';
+import {BookingService} from './data/service/booking.service';
+import {MapService} from './data/service/map.service';
 
 
 export const NB_CORE_PROVIDERS = [
@@ -56,7 +53,10 @@ export const NB_CORE_PROVIDERS = [
   // {
   //   provide: NbRoleProvider, useClass: NbSimpleRoleProvider,
   // },
-  NbSidebarService
+  NbSidebarService,
+  TourService,
+  MapService,
+  BookingService
 ];
 
 @NgModule({

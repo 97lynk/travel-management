@@ -1,0 +1,8 @@
+@import '../../plan/plan-form/plan-form.component';
+@import '../../../themes';
+
+@include nb-install-component(){
+  /deep/ nb-spinner {
+    z-index: 1000; // sent to back nav header
+  }
+}

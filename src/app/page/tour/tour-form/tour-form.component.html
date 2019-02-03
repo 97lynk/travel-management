@@ -1,0 +1,55 @@
+<nb-card>
+  <nb-card-header>Chỉnh sửa Tour</nb-card-header>
+  <nb-card-body>
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label for="tour-name">Tên tour</label>
+          <input type="text" id="tour-name" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="tour-url">Url</label>
+          <input type="text" id="tour-url" class="form-control">
+        </div>
+
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="no-date">Thời gian tour</label>
+              <div class="input-group">
+                <input type="number" min="1" id="no-date" class="form-control">
+                <span class="input-group-append"><span class="input-group-text">ngày</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="no-night"><br></label>
+              <div class="input-group">
+                <input type="number" min="1" id="no-night" class="form-control">
+                <span class="input-group-append"><span class="input-group-text">đêm</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Mô tả</label>
+          <textarea class="form-control" rows="6" id="description"></textarea>
+        </div>
+      </div>
+
+      <div class="col-lg-6 bg-light">
+        <div class="form-group">
+          <label for="image-url">Hình ảnh</label>
+          <input type="url" id="image-url" class="form-control" #imageUrl>
+        </div>
+        <img class="img-fluid" [src]="imageUrl.value" alt="Xem trước hình ảnh" title="Xem trước hình ảnh"
+             (error)="img.src = 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/09/12/11/naturo-monkey-selfie.jpg?w968h681'"
+             #img>
+      </div>
+    </div>
+  </nb-card-body>
+  <nb-card-footer></nb-card-footer>
+</nb-card>

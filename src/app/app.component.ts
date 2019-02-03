@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {Component} from '@angular/core';
 import {NbMenuItem} from '@nebular/theme';
 
 @Component({
@@ -7,7 +7,7 @@ import {NbMenuItem} from '@nebular/theme';
       <nb-layout windowMode>
           <!--HEADER-->
           <nb-layout-header fixed>
-              <app-header></app-header>
+              <travel-header></travel-header>
           </nb-layout-header>
 
           <!--SIDEBAR-->
@@ -23,7 +23,7 @@ import {NbMenuItem} from '@nebular/theme';
 
           <!--FOOTER-->
           <!--<nb-layout-footer fixed>-->
-          <!--<app-footer></app-footer>-->
+          <!--<travel-footer></travel-footer>-->
           <!--</nb-layout-footer>-->
       </nb-layout>
   `,
@@ -36,16 +36,16 @@ export class AppComponent {
       title: 'E-commerce',
       icon: 'nb-e-commerce',
       link: '/pages/dashboard',
-      home: true,
+      home: true
     },
     {
       title: 'IoT Dashboard',
       icon: 'nb-home',
-      link: '/pages/iot-dashboard',
+      link: '/pages/iot-dashboard'
     },
     {
       title: 'FEATURES',
-      group: true,
+      group: true
     },
     {
       title: 'Quản lý',
@@ -54,12 +54,12 @@ export class AppComponent {
       children: [
         {
           title: 'Plans',
-          link: '/management/plans',
+          link: '/management/plans'
         },
         {
-          title: 'Tour',
-          link: '',
-        },
+          title: 'Tours',
+          link: '/management/tours'
+        }
       ],
     },
     {
@@ -82,9 +82,9 @@ export class AppComponent {
         {
           title: 'Reset Password',
           link: '/auth/reset-password',
-        },
-      ],
-    },
+        }
+      ]
+    }
   ];
 
 

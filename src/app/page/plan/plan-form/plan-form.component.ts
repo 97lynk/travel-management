@@ -7,17 +7,17 @@ import {Plan} from '../../../data/model/api/plan';
 import {NbCalendarHeaderComponent, NbDialogService, NbStepperComponent} from '@nebular/theme';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable, of} from 'rxjs';
-import {map, startWith, tap} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material';
 import {VTextEncodePipe} from '../../../data/pipe/vtext-encode.pipe';
 import {NbDatepickerComponent} from '@nebular/theme/components/datepicker/datepicker.component';
 import {ConfirmDialogComponent} from '../../../layout/dialog/confirm-dialog.component';
-import {PaginationInstance} from 'ngx-pagination';
+import {Logger} from '../../../data/util/logger';
 
 @Component({
-  selector: 'app-plan-form',
+  selector: 'travel-plan-form',
   templateUrl: './plan-form.component.html',
   styleUrls: ['./plan-form.component.scss'],
   entryComponents: [NbCalendarHeaderComponent],
@@ -40,12 +40,6 @@ export class PlanFormComponent implements OnInit {
 
   // constains selected places
   selectedPlaces: Place[] = [];
-
-  // tours to planning
-  // tours: Tour[];
-  tours: Observable<Tour[]>;
-  pagerConfig: PaginationInstance;
-  loading: boolean;
 
   // plan
   plan: Plan;
@@ -74,8 +68,7 @@ export class PlanFormComponent implements OnInit {
     commonInfo: FormGroup,
     time: FormGroup,
     priceAndTicket: FormGroup,
-    choosePlace: FormGroup,
-    // confirm: FormGroup
+    choosePlace: FormGroup
   };
 
   constructor(private tourService: TourService,
@@ -87,12 +80,9 @@ export class PlanFormComponent implements OnInit {
               private fb: FormBuilder,
               @Inject(LOCALE_ID) protected localeId: string) {
 
-    console.log('PLAN FORM: locale_id =', localeId);
+    Logger.info('PLAN FORM: locale_id = %d', localeId);
 
     // init variables
-    // this.tours = [];
-    this.loading = false;
-    this.pagerConfig = {id: 'tour-pager', itemsPerPage: 10, currentPage: 1, totalItems: 0};
     this.provinces = [];
     this.selectedPlaces = [];
     this.plan = new Plan();
@@ -118,10 +108,7 @@ export class PlanFormComponent implements OnInit {
       }),
       choosePlace: this.fb.group({
         places: [[], Validators.required]
-      }),
-      // confirm: this.fb.group({
-      //   confirm: ['', Validators.required]
-      // })
+      })
     };
   }
 
@@ -130,9 +117,6 @@ export class PlanFormComponent implements OnInit {
     const {id} = this.route.snapshot.params;
     const url = this.route.snapshot.url.join('/');
     this.planId = Number(id);
-
-    // load list tour
-    this.tours = this.loadTour(0);
 
     // load all place
     this.mapService.getPlaces().subscribe((places: Place) => this.provinces = places.content);
@@ -155,7 +139,7 @@ export class PlanFormComponent implements OnInit {
       }
     } else if (url.indexOf('add') !== -1) this.INSERT_MODE = true;
 
-    console.log('PLAN FORM: mode =', (this.INSERT_MODE) ? 'INSERT' : 'EDIT');
+    Logger.info('PLAN FORM: mode =', (this.INSERT_MODE) ? 'INSERT' : 'EDIT');
 
     // handle event input
     this.filteredProvinces = this.inputPlace.valueChanges.pipe(
@@ -168,27 +152,27 @@ export class PlanFormComponent implements OnInit {
     step1: (tour: Tour) => {
       this._chooseTour(tour);
       this.planStepper.next();
-      console.log('complete step 1: ', JSON.stringify(tour, null, 2));
+      Logger.success('complete step 1:\n%o', tour);
     },
     step2: () => {
       this._submitCommonInfo();
       this.planStepper.next();
-      console.log('complete step 2: ', this.stepperForm.commonInfo.value);
+      Logger.success('complete step 2:\n%o', this.stepperForm.commonInfo.value);
     },
     step3: () => {
       this._submitChooseDate();
       this.planStepper.next();
-      console.log('complete step 3: ', this.stepperForm.time.value);
+      Logger.success('complete step 3:\n%o', this.stepperForm.time.value);
     },
     step4: () => {
       this._submitPriceAndTicket();
       this.planStepper.next();
-      console.log('complete step 4: ', this.stepperForm.priceAndTicket.value);
+      Logger.success('complete step 4:\n%o', this.stepperForm.priceAndTicket.value);
     },
     step5: () => {
       this._submitChoosePlaces();
       this.planStepper.next();
-      console.log('complete step 5: ', this.stepperForm.choosePlace.value);
+      Logger.success('complete step 5:\n%o', this.stepperForm.choosePlace.value);
     },
     step6: () => {
       const dialog = this.dialogService.open(ConfirmDialogComponent);
@@ -198,23 +182,14 @@ export class PlanFormComponent implements OnInit {
         leftButton: {status: 'secondary', label: 'Hủy', return: false},
         rightButton: {status: 'primary', label: 'Lưu', return: true}
       };
+      Logger.info('Open dialog:\n %o', dialog.componentRef.instance.config);
       dialog.onClose.subscribe(value => {
+        Logger.info('Close dialog:\n %o', value);
         if (value) this._submitPlanForm();
       });
     }
   };
 
-  loadTour = (page: number) => {
-    this.loading = true;
-    this.tours = of([]);
-    return this.tourService.getTours(page, 10)
-        .pipe(tap((tours: Tour) => {
-          this.pagerConfig.itemsPerPage = tours.page.size;
-          this.pagerConfig.currentPage = tours.page.number + 1;
-          this.pagerConfig.totalItems = tours.page.totalElements;
-          this.loading = false;
-        }), map((tours: Tour) => tours.content));
-  };
   /**
    * complete STEP 1 - choose a tour in list or click button
    * @param tour

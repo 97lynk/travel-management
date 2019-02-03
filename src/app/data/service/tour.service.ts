@@ -5,10 +5,7 @@ import {Plan} from '../model/api/plan';
 import {environment} from '../../../environments/environment';
 import {Tour} from '../model/api/tour';
 
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class TourService {
 
 

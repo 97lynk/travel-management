@@ -1,3 +1,3 @@
 export enum Operate {
-    ADD, EDIT, DELETE, LOGIN, LOGOUT
+  ADD, EDIT, DELETE, LOGIN, LOGOUT
 }

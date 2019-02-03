@@ -37,6 +37,7 @@
               "./node_modules/eva-icons/style/eva-icons.css",
               "./node_modules/socicon/css/socicon.css",
               "./node_modules/ionicons/scss/ionicons.scss",
+              "./node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
               "src/styles.scss"
             ],
             "scripts": [
@@ -105,6 +106,7 @@
               "./node_modules/eva-icons/style/eva-icons.css",
               "./node_modules/socicon/css/socicon.css",
               "./node_modules/ionicons/scss/ionicons.scss",
+              "./node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
               "src/styles.scss"
             ],
             "scripts": [

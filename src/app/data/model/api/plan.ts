@@ -4,17 +4,19 @@ import {ResponseResource} from '../extra/response-resource';
 
 export class Plan extends ResponseResource<Plan> {
 
-    id: number = 0;
-    name: string = '';
-    url: string = '';
-    startTime: number = Date.now();
-    numberOfSlot: number = 0;
-    numberOfReservedSlot: number = 0;
-    adultPrice: number = 0;
-    childPrice: number = 0;
-    tour: Tour = new Tour();
-    places: Place[];
-    placeIds: number[];
-
+  constructor(public id: number = 0,
+              public name: string = '',
+              public url: string = '',
+              public startTime: number = Date.now(),
+              public numberOfSlot: number = 0,
+              public numberOfReservedSlot: number = 0,
+              public adultPrice: number = 0,
+              public childPrice: number = 0,
+              public tour: Tour = new Tour(),
+              public places: Place[] = [],
+              public placeIds: number[] = []
+  ) {
+    super();
+  }
 }
 

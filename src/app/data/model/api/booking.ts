@@ -5,18 +5,20 @@ import {ProcessType} from '../extra/process-type';
 
 export class Booking extends ResponseResource<Booking> {
 
-    id: number | string = '';
-    fullName: string = '';
-    gender: boolean = true;
-    email: string = '';
-    phoneNumber: string = '';
-    bankAccount: string = '';
-    bookingTime: number = Date.now();
-    totalOfTicket: number = 0;
-    grandTotal: number = 0.0;
-    planId: number;
-    plan: Plan;
-    processType: ProcessType;
-    details: BookingDetail[] = [];
+  constructor(public id: number | string = '',
+              public fullName: string = '',
+              public gender: boolean = true,
+              public email: string = '',
+              public phoneNumber: string = '',
+              public bankAccount: string = '',
+              public bookingTime: number = Date.now(),
+              public totalOfTicket: number = 0,
+              public grandTotal: number = 0.0,
+              public planId: number = 0,
+              public plan: Plan = new Plan(),
+              public processType: ProcessType = null,
+              public details: BookingDetail[] = []) {
+    super();
+  }
 
 }

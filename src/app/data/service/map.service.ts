@@ -6,9 +6,7 @@ import {Plan} from '../model/api/plan';
 import {Criteria} from '../model/extra/criteria';
 import {environment} from '../../../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class MapService {
 
   MAP_API_URL = `${environment.apiHost}/api/v1/maps`;

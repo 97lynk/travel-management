@@ -44,23 +44,21 @@ import {HeaderComponent} from './layout/header/header.component';
 import {FooterComponent} from './layout/footer/footer.component';
 import {HomeComponent} from './page/home/home.component';
 import {LoginComponent} from './page/login/login.component';
-import {PlanManagementComponent} from './page/plan/plan-management.component';
-import {PlanListComponent} from './page/plan/plan-list/plan-list.component';
-import {PlanFormComponent} from './page/plan/plan-form/plan-form.component';
-import {PlanPreviewComponent} from './page/plan/plan-preview/plan-preview.component';
 import {ConfirmDialogComponent} from './layout/dialog/confirm-dialog.component';
 import {VTextEncodePipe} from './data/pipe/vtext-encode.pipe';
 import {VDateTimePipe} from './data/pipe/vdate-time.pipe';
 import {
   MatAutocompleteModule,
+  MatButtonModule,
   MatChipsModule,
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
+  MatMenuModule,
   MatStepperModule
 } from '@angular/material';
 import {NgxPaginationModule} from 'ngx-pagination';
-import {NbCardHeaderComponent} from '@nebular/theme/components/card/card.component';
+import {TourListComponent} from './page/tour/tour-list/tour-list.component';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
 
@@ -105,7 +103,9 @@ const MAT_MODULES = [
   MatFormFieldModule,
   MatStepperModule,
   MatIconModule,
-  MatAutocompleteModule
+  MatButtonModule,
+  MatAutocompleteModule,
+  MatMenuModule
 ];
 
 const OTHER_MODULES = [NgxPaginationModule];
@@ -116,11 +116,7 @@ const COMPONENTS = [
   HomeComponent,
   LoginComponent,
 
-  // PlanManagementComponent,
-  // PlanListComponent,
-  // PlanFormComponent,
-  // PlanPreviewComponent,
-
+  TourListComponent,
   ConfirmDialogComponent
 ];
 
@@ -135,9 +131,7 @@ const PIPES = [
 
 const NB_THEME_PROVIDERS = [
   ...NbThemeModule.forRoot(
-      {
-        name: 'corporate',
-      },
+      {name: 'corporate'},
       [CORPORATE_THEME]
   ).providers,
   ...NbSidebarModule.forRoot().providers,

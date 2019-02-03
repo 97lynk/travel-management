@@ -1,10 +1,9 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {NbDialogService, NbSidebarService, NbWindowService} from '@nebular/theme';
+import {Component, OnInit, TemplateRef} from '@angular/core';
+import {NbDialogService, NbSidebarService} from '@nebular/theme';
 import {NbAuthOAuth2JWTToken, NbAuthService} from '@nebular/auth';
-import {LoginComponent} from '../../page/login/login.component';
 
 @Component({
-  selector: 'app-header',
+  selector: 'travel-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })

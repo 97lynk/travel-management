@@ -6,57 +6,26 @@
 
       <!--step 1-->
       <nb-step label="Chọn tour" [stepControl]="stepperForm.chooseTour">
-        <div class="d-flex flex-wrap align-content-start">
+        <div class="d-flex flex-wrap border-bottom mb-4">
           <h2>Chọn tour</h2>
-          <button nbButton size="xsmall" [hidden]="INSERT_MODE"
-                  shape="rectangle" (click)="stepController.step1(plan.tour)">Chọn tour cũ
-            <i class="nb-arrow-right font-w-bold"></i>
-          </button>
+          <div class="ml-auto">
+            <button nbButton size="xsmall" [hidden]="INSERT_MODE" shape="rectangle"
+                    (click)="stepController.step1(plan.tour)">Chọn tour cũ
+              <i class="nb-arrow-right font-w-bold"></i>
+            </button>
+          </div>
         </div>
 
         <div class="p-1">
-          <nb-card>
-            <nb-card-body>
-              <pagination-template #p="paginationApi" [id]="pagerConfig.id" class="text-center"
-                                   (pageChange)="tours = loadTour($event - 1)">
-                <ul class="ngx-pagination">
-                  <li class="pagination-previous" [class.disabled]="p.isFirstPage()">
-                    <a (click)="p.previous()" *ngIf="!p.isFirstPage()"> Trước</a>
-                    <span *ngIf="p.isFirstPage()"> Trước</span>
-                  </li>
-
-                  <li *ngFor="let page of p.pages">
-                    <a (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}</a>
-                    <span *ngIf="p.getCurrent() === page.value" class="current">{{ page.label }}</span>
-                  </li>
-
-                  <li class="pagination-next" [class.disabled]="p.isLastPage()">
-                    <a (click)="p.next()" *ngIf="!p.isLastPage()"> Tiếp</a>
-                    <span *ngIf="p.isLastPage()"> Tiếp</span>
-                  </li>
-                </ul>
-
-              </pagination-template>
-              <nb-list [nbSpinner]="loading" style="min-height: 200px">
-                <nb-list-item *ngFor="let tour of tours | async | paginate: pagerConfig"
-                              (click)="stepController.step1(tour)">
-                  <nb-user size="xlarge"
-                           name="#{{ tour.id }} -  {{ tour.name}}"
-                           title="{{ tour.numberOfDate }} ngày {{ tour.numberOfNight }} đêm"
-                           [picture]="tour.imageUrl">
-                  </nb-user>
-                </nb-list-item>
-              </nb-list>
-            </nb-card-body>
-          </nb-card>
+          <travel-tour-list (clickTour)="stepController.step1($event)" [showMenu]="false"></travel-tour-list>
         </div>
       </nb-step>
 
       <!--step 2-->
       <nb-step label="Thông tin chung" [stepControl]="stepperForm.commonInfo">
-        <div class="d-flex flex-wrap align-content-start">
+        <div class="d-flex flex-wrap border-bottom mb-4">
           <h2>Thiết lập thông tin</h2>
-          <div>
+          <div class="ml-auto">
             <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
               <i class="nb-arrow-left font-w-bold"></i> Trước
             </button>
@@ -96,9 +65,9 @@
 
       <!--step 3-->
       <nb-step label="Thời gian" [stepControl]="stepperForm.time">
-        <div class="d-flex flex-wrap align-content-start">
+        <div class="d-flex flex-wrap border-bottom mb-4">
           <h2>Thời gian</h2>
-          <div>
+          <div class="ml-auto">
             <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
               <i class="nb-arrow-left font-w-bold"></i> Trước
             </button>
@@ -124,9 +93,9 @@
 
       <!--step 4-->
       <nb-step label="Giá và số vé" [stepControl]="stepperForm.priceAndTicket">
-        <div class="d-flex flex-wrap align-content-start">
+        <div class="d-flex flex-wrap border-bottom mb-4">
           <h2>Giá và số lượng vé</h2>
-          <div>
+          <div class="ml-auto">
             <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
               <i class="nb-arrow-left font-w-bold"></i> Trước
             </button>
@@ -139,7 +108,7 @@
 
         <form [formGroup]="stepperForm.priceAndTicket">
           <div class="row">
-            <div class="col">
+            <div class="col-md-6">
               <div class="form-group">
                 <label for="adult-price">Giá người lớn (từ đủ 12 tuổi trở lên)</label>
                 <div class="input-group">
@@ -159,7 +128,7 @@
                 </ng-container>
               </div>
             </div>
-            <div class="col">
+            <div class="col-md-6">
               <div class="form-group">
                 <label for="child-price">Giá trẻ em</label>
                 <div class="input-group">
@@ -182,7 +151,7 @@
           </div>
 
           <div class="row">
-            <div class="col">
+            <div class="col-md-6">
               <div class="form-group">
                 <label for="number-of-reserved-slot">Số vé đã đặt</label>
                 <input class="form-control" id="number-of-reserved-slot" placeholder="Số vé đã đặt" type="number"
@@ -199,7 +168,7 @@
                 </ng-container>
               </div>
             </div>
-            <div class="col">
+            <div class="col-md-6">
               <div class="form-group">
                 <label for="number-of-slot">Tổng số vé</label>
                 <input class="form-control" id="number-of-slot" placeholder="Tổng số vé" type="number"
@@ -222,9 +191,9 @@
 
       <!--step 5-->
       <nb-step label="Chọn địa điểm" [stepControl]="stepperForm.choosePlace">
-        <div class="d-flex flex-wrap align-content-start">
+        <div class="d-flex flex-wrap border-bottom mb-4">
           <h2>Chọn địa điểm</h2>
-          <div>
+          <div class="ml-auto">
             <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
               <i class="nb-arrow-left font-w-bold"></i> Trước
             </button>
@@ -236,7 +205,8 @@
         </div>
 
         <form class="row" [formGroup]="stepperForm.choosePlace">
-          <mat-form-field class="col">
+          <mat-form-field class="col form-group">
+            <p class="text-danger" *ngIf="selectedPlaces.length == 0">Không có địa điểm nào được chọn</p>
             <mat-chip-list #chipList>
               <mat-chip *ngFor="let p of selectedPlaces" [selectable]="true" [removable]="true" (removed)="remove(p)">
                 {{ p?.name }}
@@ -244,7 +214,7 @@
               </mat-chip>
             </mat-chip-list>
             <hr>
-            <input class="form-control w-100" #placeInput [formControl]="inputPlace" [matAutocomplete]="auto"
+            <input class="form-control mx-0 w-100" #placeInput [formControl]="inputPlace" [matAutocomplete]="auto"
                    [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                    [matChipInputAddOnBlur]="true">
             <ng-container
@@ -264,9 +234,9 @@
 
       <!--step 6-->
       <nb-step label="Xác nhận" [stepControl]="stepperForm.confirm">
-        <div class="d-flex flex-wrap align-content-start">
+        <div class="d-flex flex-wrap border-bottom mb-4">
           <h2>Xác nhận</h2>
-          <div>
+          <div class="ml-auto">
             <button nbButton size="xsmall" nbStepperPrevious shape="rectangle">
               <i class="nb-arrow-left font-w-bold"></i> Trước
             </button>
@@ -287,14 +257,14 @@
           </div>
 
           <div class="row">
-            <div class="col">
+            <div class="col-md-6">
               <div class="form-group">
                 <label for="plan-url-confirm">Tiêu đề</label>
                 <input class="form-control text-hint" id="plan-title-confirm"
                        type="text" disabled value="{{ plan?.tour?.name }}">
               </div>
             </div>
-            <div class="col">
+            <div class="col-md-6">
               <div class="form-group">
                 <label for="plan-url-confirm">URL</label>
                 <input class="form-control text-hint" id="plan-url-confirm"
@@ -304,14 +274,14 @@
           </div>
 
           <div class="row">
-            <div class="col">
+            <div class="col-sm-6">
               <div class="form-group">
                 <label for="start-date-confirm">Thời điểm khởi hành</label>
                 <input class="form-control text-hint" placeholder="Thời điểm khởi hành" id="start-date-confirm"
                        type="text" disabled value="{{ startDate | date }}">
               </div>
             </div>
-            <div class="col">
+            <div class="col-sm-6">
               <div class="form-group">
                 <label for="time-range-confirm">Thời gian chuyến du lịch</label>
                 <input class="form-control text-hint" id="time-range-confirm"
@@ -322,14 +292,14 @@
           </div>
 
           <div class="row">
-            <div class="col">
+            <div class="col-sm-6">
               <div class="form-group">
                 <label for="adult-price-confirm">Giá người lớn (từ đủ 12 tuổi trở lên)</label>
                 <input class="form-control text-hint" placeholder="Số vé đã đặt" id="adult-price-confirm"
                        type="text" disabled [value]="plan.adultPrice">
               </div>
             </div>
-            <div class="col">
+            <div class="col-sm-6">
               <div class="form-group">
                 <label for="child-price-confirm">Giá trẻ em</label>
                 <input class="form-control text-hint" placeholder="Tổng số vé" id="child-price-confirm"
@@ -339,14 +309,14 @@
           </div>
 
           <div class="row">
-            <div class="col">
+            <div class="col-sm-6">
               <div class="form-group">
                 <label for="number-of-reserved-slot-confirm">Số vé đã đặt</label>
                 <input class="form-control text-hint" placeholder="Số vé đã đặt" id="number-of-reserved-slot-confirm"
                        disabled type="text" [value]="plan.numberOfReservedSlot">
               </div>
             </div>
-            <div class="col">
+            <div class="col-sm-6">
               <div class="form-group">
                 <label for="number-of-slot-confirm">Tổng số vé</label>
                 <input class="form-control text-hint" placeholder="Tổng số vé" id="number-of-slot-confirm"

@@ -5,7 +5,7 @@ import {NbAuthComponent, NbLogoutComponent, NbRegisterComponent, NbRequestPasswo
 import {LoginComponent} from './page/login/login.component';
 
 const routes: Routes = [
-  {path: 'management/plans', loadChildren: './page/plan/plan.module#PlanModule'},
+  {path: 'management', loadChildren: './page/page.module#PageModule'},
   {path: 'home', component: HomeComponent},
   {
     path: 'auth', component: NbAuthComponent,
@@ -18,7 +18,7 @@ const routes: Routes = [
       {path: 'reset-password', component: NbResetPasswordComponent},
     ]
   },
-  {path: '', redirectTo: '', pathMatch: 'full'},
+  {path: '', redirectTo: 'home', pathMatch: 'full'},
   {path: '**', redirectTo: ''}
 ];
 

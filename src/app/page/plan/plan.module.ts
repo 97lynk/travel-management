@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {PlanRoutingModule} from './plan-routing.module';
-import {CommonModule} from '@angular/common';
 import {PlanManagementComponent} from './plan-management.component';
 import {PlanListComponent} from './plan-list/plan-list.component';
 import {PlanFormComponent} from './plan-form/plan-form.component';
@@ -15,14 +14,8 @@ const PLANS_COMPONENTS = [
 ];
 
 @NgModule({
-  imports: [
-    // CommonModule,
-    PlanRoutingModule,
-    ThemeModule
-  ],
-  declarations: [
-    ...PLANS_COMPONENTS
-  ]
+  imports: [ThemeModule, PlanRoutingModule],
+  declarations: [...PLANS_COMPONENTS]
 })
 export class PlanModule {
 }

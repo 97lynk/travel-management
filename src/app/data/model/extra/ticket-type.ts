@@ -1,3 +1,3 @@
 export enum TicketType {
-    ADULT = 'ADULT', CHILD = 'CHILD'
+  ADULT = 'ADULT', CHILD = 'CHILD'
 }
