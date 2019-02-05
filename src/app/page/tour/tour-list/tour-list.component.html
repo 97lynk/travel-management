@@ -1,0 +1,65 @@
+<nb-card>
+  <nb-card-header class="d-flex flex-wrap">
+    <h5> Danh sách tour</h5>
+    <pagination-template class="text-center ml-auto font-weight-normal" #p="paginationApi"
+                         [id]="pagerConfig.id"
+                         (pageChange)="tours = loadTour($event - 1)">
+      <ul class="ngx-pagination mb-0">
+        <li class="pagination-previous" [class.disabled]="p.isFirstPage()">
+          <a (click)="p.previous()" *ngIf="!p.isFirstPage()"> Trước</a>
+          <span *ngIf="p.isFirstPage()"> Trước</span>
+        </li>
+        <li *ngFor="let page of p.pages">
+          <a (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}</a>
+          <span *ngIf="p.getCurrent() === page.value" class="current">{{ page.label }}</span>
+        </li>
+        <li class="pagination-next" [class.disabled]="p.isLastPage()">
+          <a (click)="p.next()" *ngIf="!p.isLastPage()"> Tiếp</a>
+          <span *ngIf="p.isLastPage()"> Tiếp</span>
+        </li>
+      </ul>
+    </pagination-template>
+  </nb-card-header>
+  <nb-list [nbSpinner]="loading" style="min-height: 200px">
+    <nb-list-item *ngFor="let tour of tours | async | paginate: pagerConfig"
+                  (click)="clickTour.emit(tour)" class="d-flex">
+      <!--left side: tour info-->
+      <nb-user size="xlarge"
+               name="#{{ tour.id }} -  {{ tour.name}}"
+               title="{{ tour.numberOfDate }} ngày {{ tour.numberOfNight }} đêm"
+               [picture]="tour.imageUrl">
+      </nb-user>
+
+      <!--rigth side: menu-->
+      <div class="ml-auto" *ngIf="showMenu">
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <i class="eva eva-more-vertical icon-medium font-weight-bold"></i>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item class="m-0" (click)="clickPreview(tour)">Xem trước</button>
+          <button mat-menu-item class="m-0" (click)="clickEdit(tour)">Sửa</button>
+          <button mat-menu-item class="m-0" (click)="clickDelete(tour)">Xóa</button>
+        </mat-menu>
+      </div>
+    </nb-list-item>
+  </nb-list>
+  <nb-card-footer>
+    <pagination-template class="text-right ml-auto font-weight-normal"
+                         (pageChange)="tours = loadTour($event - 1)">
+      <ul class="ngx-pagination mb-0">
+        <li class="pagination-previous" [class.disabled]="p.isFirstPage()">
+          <a (click)="p.previous()" *ngIf="!p.isFirstPage()"> Trước</a>
+          <span *ngIf="p.isFirstPage()"> Trước</span>
+        </li>
+        <li *ngFor="let page of p.pages">
+          <a (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}</a>
+          <span *ngIf="p.getCurrent() === page.value" class="current">{{ page.label }}</span>
+        </li>
+        <li class="pagination-next" [class.disabled]="p.isLastPage()">
+          <a (click)="p.next()" *ngIf="!p.isLastPage()"> Tiếp</a>
+          <span *ngIf="p.isLastPage()"> Tiếp</span>
+        </li>
+      </ul>
+    </pagination-template>
+  </nb-card-footer>
+</nb-card>

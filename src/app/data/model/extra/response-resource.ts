@@ -3,8 +3,8 @@ import {Page} from './page';
 
 export class ResponseResource<T> {
 
-    links: Link[];
-    content: T[]; // for response data with array
-    page: Page;
-
+  constructor(public links: Link[] = [],
+              public content: T[] = [], // for response data with array
+              public page: Page = new Page()) {
+  }
 }

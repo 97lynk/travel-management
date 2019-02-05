@@ -1,7 +1,7 @@
 export class Criteria {
 
-    key: string;
-    operator: string;
-    value: string;
-
+  constructor(public key: string = '',
+              public operator: string = '',
+              public value: string = '') {
+  }
 }

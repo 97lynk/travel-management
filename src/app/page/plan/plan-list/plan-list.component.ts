@@ -15,6 +15,7 @@ import {TourService} from '../../../data/service/tour.service';
 import {Plan} from '../../../data/model/api/plan';
 import {Page} from '../../../data/model/extra/page';
 import {ConfirmDialogComponent} from '../../../layout/dialog/confirm-dialog.component';
+import {Logger} from '../../../data/util/logger';
 
 const TOASTR_CONFIG = {
   destroyByClick: true,
@@ -24,10 +25,9 @@ const TOASTR_CONFIG = {
 };
 
 @Component({
-  selector: 'app-plan-list',
+  selector: 'travel-plan-list',
   templateUrl: './plan-list.component.html',
-  styleUrls: ['./plan-list.component.scss'],
-  entryComponents: [ConfirmDialogComponent]
+  styleUrls: ['./plan-list.component.scss']
 })
 export class PlanListComponent implements OnInit, OnDestroy {
 
@@ -136,7 +136,9 @@ export class PlanListComponent implements OnInit, OnDestroy {
       leftButton: {status: 'primary', label: 'Hủy', return: false},
       rightButton: {status: 'danger', label: 'Xóa', return: true}
     };
+    Logger.info('Open dialog:\n %o', dialog.componentRef.instance.config);
     dialog.onClose.subscribe(value => {
+      Logger.info('Close dialog:\n %o', value);
       if (!value) return;
       this.tourService.deletePlanById(planId).pipe(
           tap((plan: Plan) => {

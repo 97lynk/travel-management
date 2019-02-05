@@ -1,21 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import '~@nebular/bootstrap/styles/globals';
+@import '~@nebular/theme/styles/globals';
 @import '~@nebular/theme/styles/prebuilt/default';
 @import '~@nebular/theme/styles/prebuilt/corporate';
 @import '~@nebular/auth/styles/all';
 
 @include nb-install() {
+
+  // framework global styles
+  @include nb-theme-global();
+  @include nb-auth-global();
   @include nb-bootstrap-global();
 
   button {
-    margin: 5px;
+    margin: 3px;
   }
-}
 
-html {
+};
+
+html, body {
+  height: 100%;
   font-size: 14px;
 }
+
+///deep/ * :not(.material-icons):not(.eva):not(i[class~='nb-']) {
+//  font-family: Roboto, "Helvetica Neue", sans-serif !important;
+//}
 
 // fix entry web content moved
 html.cdk-global-scrollblock {

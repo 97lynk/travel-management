@@ -1,3 +1,3 @@
 export enum ProcessType {
-    IN_CART, CHECKING, COMPLETE
+  IN_CART, CHECKING, COMPLETE
 }

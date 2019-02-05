@@ -1,11 +1,12 @@
 export class Link {
 
-    rel: string;
-    href: string;
-    hreflang: string;
-    media: string;
-    title: string;
-    type: string;
-    deprecation: string;
+  constructor(public rel: string = '',
+              public href: string = '',
+              public hreflang: string = '',
+              public media: string = '',
+              public title: string = '',
+              public type: string = '',
+              public deprecation: string = '') {
+  }
 
 }

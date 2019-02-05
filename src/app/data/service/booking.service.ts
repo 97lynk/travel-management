@@ -9,9 +9,7 @@ import {BookingDetail} from '../model/api/booking-detail';
 import {TicketType} from '../model/extra/ticket-type';
 
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class BookingService {
 
 
