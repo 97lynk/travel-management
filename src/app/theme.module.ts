@@ -59,6 +59,7 @@ import {
 } from '@angular/material';
 import {NgxPaginationModule} from 'ngx-pagination';
 import {TourListComponent} from './page/tour/tour-list/tour-list.component';
+import {CKEditorModule} from 'ng2-ckeditor';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
 
@@ -108,7 +109,7 @@ const MAT_MODULES = [
   MatMenuModule
 ];
 
-const OTHER_MODULES = [NgxPaginationModule];
+const OTHER_MODULES = [NgxPaginationModule, CKEditorModule];
 
 const COMPONENTS = [
   HeaderComponent,
