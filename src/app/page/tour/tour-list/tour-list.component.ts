@@ -36,7 +36,7 @@ export class TourListComponent implements OnInit {
     this.tours = this.loadTour(0);
   }
 
-  loadTour = (page: number) => {
+  loadTour(page: number) {
     this.loading = true;
     this.tours = of([]);
     return this.tourService.getTours(page, 10)
@@ -48,15 +48,15 @@ export class TourListComponent implements OnInit {
         }), map((tours: Tour) => tours.content));
   };
 
-  clickPreview = (tour: Tour) => {
+  clickPreview(tour: Tour) {
 
   };
 
-  clickEdit = (tour: Tour) => {
+  clickEdit(tour: Tour) {
     this.router.navigate(['/management/tours', 'edit', tour.id]);
   };
 
-  clickDelete = (tour: Tour) => {
+  clickDelete(tour: Tour) {
     const dialog = this.dialogService.open(ConfirmDialogComponent);
     dialog.componentRef.instance.config = {
       title: 'Xóa tour',

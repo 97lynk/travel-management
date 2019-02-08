@@ -1,14 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-window['CKEDITOR_BASEPATH'] = '//cdn.ckeditor.com/4.7.3/full-all/';
-import 'ckeditor';
-const CKEditorConfig = {
-  extraPlugins: 'divarea',
-  htmlEncodeOutput: false,
-  entities: false,
-  height: '100%',
-  width: '100%'
-};
+import {Logger} from '../../../data/util/logger';
 
 @Component({
   selector: 'app-tour-form',
@@ -32,5 +24,19 @@ export class TourFormComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
+
+  CKEditorConfig = {
+    extraPlugins: 'divarea',
+    htmlEncodeOutput: false,
+    entities: false,
+    height: '200px',
+    width: '100%'
+  };
+
+
+  loadImageError(img: HTMLImageElement) {
+    img.src = 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/09/12/11/naturo-monkey-selfie.jpg?w968h681';
+  }
 }

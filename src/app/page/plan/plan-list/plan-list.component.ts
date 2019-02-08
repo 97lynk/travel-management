@@ -117,7 +117,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
   /**
    * init startpage, pageToLoadNext and pageToLoadPrev
    */
-  initIndex = () => {
+  initIndex(){
     const {page} = this.route.snapshot.queryParams;
     this.startPage = page ? Number.parseInt(page, 10) : 1;
     this.pageToLoadNext = this.startPage - 1;
@@ -129,7 +129,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
    * @param {TemplateRef<any>} dialog
    * @param {number} planId
    */
-  confirmDeletePlan = (planId: number) => {
+  confirmDeletePlan(planId: number){
     const dialog = this.dialogService.open(ConfirmDialogComponent);
     dialog.componentRef.instance.config = {
       title: 'Xóa plan', message: `Bạn có muốn xóa Plan#${planId}?`,
@@ -162,7 +162,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
    * @param {number} page
    * @param {string} from
    */
-  updateUrl = (page: number, from = 'code') => {
+  updateUrl(page: number, from = 'code'){
     this.router.navigate(['.'], {
       queryParams: {page},
       replaceUrl: true,
@@ -174,7 +174,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
   /**
    * load previous page if this page isn't the first page
    */
-  loadPrevious = () => {
+  loadPrevious(){
     if (this.loadingPrevious || this.pageToLoadPrev < 0 || this.completePage[this.pageToLoadPrev]) return;
 
     // set flag prevent multiple request in the same page
@@ -188,7 +188,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
         .pipe(tap((plans: Plan) => {
           // update page
           this.page = plans.page;
-          this.refreshCompletePage(plans.page);
+          this.refreshCompletePage();
         }))
         .subscribe((plans: Plan) => {
           // push data to head array
@@ -210,7 +210,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
   /**
    * load next page if this page isn't the last page
    */
-  loadNext = () => {
+  loadNext(){
     if (this.loadingNext || this.pageToLoadNext >= this.page.totalPages || this.completePage[this.pageToLoadNext]) return;
 
     // set flag prevent multiple request in the same page
@@ -226,7 +226,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
         .pipe(tap((plans: Plan) => {
           // update page
           this.page = plans.page;
-          this.refreshCompletePage(plans.page);
+          this.refreshCompletePage();
         }))
         .subscribe((plans: Plan) => {
           // push data to tail array
@@ -247,7 +247,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
   /**
    * refresh completePage
    */
-  refreshCompletePage = (page: Page) => {
+  refreshCompletePage(){
     if (this.completePage.length < this.page.totalPages) {
       const tempArray = new Array(this.page.totalPages - this.completePage.length);
       tempArray.fill(false);

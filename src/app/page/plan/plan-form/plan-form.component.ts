@@ -129,11 +129,11 @@ export class PlanFormComponent implements OnInit {
         this.tourService.getPlanById(this.planId, ['tour', 'places']).subscribe((plan: Plan) => {
           this.plan = plan;
 
-          this._chooseTour(plan.tour);
-          this._submitCommonInfo();
-          this._submitChooseDate();
-          this._submitPriceAndTicket();
-          this._submitChoosePlaces();
+          this.chooseTour(plan.tour);
+          this.submitCommonInfo();
+          this.submitChooseDate();
+          this.submitPriceAndTicket();
+          this.submitChoosePlaces();
         });
         this.INSERT_MODE = false;
       }
@@ -144,33 +144,33 @@ export class PlanFormComponent implements OnInit {
     // handle event input
     this.filteredProvinces = this.inputPlace.valueChanges.pipe(
         startWith(''),
-        map((input: string | Place | null) => input ? this._filterStates(input) : this.provinces.slice())
+        map((input: string | Place | null) => input ? this.filterStates(input) : this.provinces.slice())
     );
   }
 
   stepController = {
     step1: (tour: Tour) => {
-      this._chooseTour(tour);
+      this.chooseTour(tour);
       this.planStepper.next();
       Logger.success('complete step 1:\n%o', tour);
     },
     step2: () => {
-      this._submitCommonInfo();
+      this.submitCommonInfo();
       this.planStepper.next();
       Logger.success('complete step 2:\n%o', this.stepperForm.commonInfo.value);
     },
     step3: () => {
-      this._submitChooseDate();
+      this.submitChooseDate();
       this.planStepper.next();
       Logger.success('complete step 3:\n%o', this.stepperForm.time.value);
     },
     step4: () => {
-      this._submitPriceAndTicket();
+      this.submitPriceAndTicket();
       this.planStepper.next();
       Logger.success('complete step 4:\n%o', this.stepperForm.priceAndTicket.value);
     },
     step5: () => {
-      this._submitChoosePlaces();
+      this.submitChoosePlaces();
       this.planStepper.next();
       Logger.success('complete step 5:\n%o', this.stepperForm.choosePlace.value);
     },
@@ -185,7 +185,7 @@ export class PlanFormComponent implements OnInit {
       Logger.info('Open dialog:\n %o', dialog.componentRef.instance.config);
       dialog.onClose.subscribe(value => {
         Logger.info('Close dialog:\n %o', value);
-        if (value) this._submitPlanForm();
+        if (value) this.submitPlanForm();
       });
     }
   };
@@ -195,7 +195,7 @@ export class PlanFormComponent implements OnInit {
    * @param tour
    * @param isOldTour
    */
-  private _chooseTour = (tour: Tour) => {
+  private chooseTour(tour: Tour) {
     // set selected tour
     this.stepperForm.chooseTour.setValue({tour: tour});
 
@@ -207,12 +207,12 @@ export class PlanFormComponent implements OnInit {
     this.stepperForm.commonInfo.get('title').valueChanges.subscribe(value => {
       this.stepperForm.commonInfo.get('url').setValue(this.vtextPipe.transform(value));
     });
-  };
+  }
 
   /**
    * complete STEP 2
    */
-  private _submitCommonInfo = () => {
+  private submitCommonInfo() {
     // preparing next step
     if (this.INSERT_MODE) {
       const tomorrow = Date.now() + 24 * 60 * 60 * 1000;// timestamp
@@ -222,12 +222,12 @@ export class PlanFormComponent implements OnInit {
 
     this.startDatePicker.value = this.startDate;
     this.stepperForm.time.setValue({time: this.startDate});
-  };
+  }
 
   /**
    * complete STEP3
    */
-  private _submitChooseDate = () => {
+  private submitChooseDate() {
     // set selected date
     this.stepperForm.time.setValue({time: this.startDate});
 
@@ -247,12 +247,12 @@ export class PlanFormComponent implements OnInit {
         totalSlot: this.plan.numberOfSlot
       });
     }
-  };
+  }
 
   /**
    * complete STEP4
    */
-  private _submitPriceAndTicket = () => {
+  private submitPriceAndTicket() {
     // prepare next step
     if (!this.INSERT_MODE) {
       // push places in response data to seclected list
@@ -264,12 +264,12 @@ export class PlanFormComponent implements OnInit {
 
       this.stepperForm.choosePlace.setValue({places: this.selectedPlaces});
     }
-  };
+  }
 
   /**
    * complete STEP 5
    */
-  private _submitChoosePlaces = () => {
+  private submitChoosePlaces() {
     // set selected places
     this.stepperForm.choosePlace.setValue({places: this.selectedPlaces});
 
@@ -288,12 +288,12 @@ export class PlanFormComponent implements OnInit {
     this.plan.placeIds = this.getControl('choosePlace', 'places').value.map(p => p.id);
 
     // this.stepperForm.confirm.setValue({'confirm': 'OK'});
-  };
+  }
 
   /**
    * complete STEP 6 - submit to complete stepper
    */
-  private _submitPlanForm = () => {
+  private submitPlanForm() {
     if (this.INSERT_MODE)
       this.tourService.addNewPlan(this.plan)
           .subscribe(
@@ -336,7 +336,7 @@ export class PlanFormComponent implements OnInit {
                 };
                 this.planStepper.next();
               });
-  };
+  }
 
   /**
    * get form control in stepperForm
@@ -344,7 +344,9 @@ export class PlanFormComponent implements OnInit {
    * @param {string} control
    * @returns {any}
    */
-  getControl = (group: string, control: string) => this.stepperForm[group].get(control);
+  getControl(group: string, control: string) {
+    return this.stepperForm[group].get(control);
+  }
 
   /**
    * =========== =========== =========== ===========
@@ -356,51 +358,51 @@ export class PlanFormComponent implements OnInit {
    * move a place from selectedPlaces array to provinces array
    * @param p
    */
-  remove = (p: Place) => {
+  remove(p: Place) {
     this.provinces.push(p);
     const index = this.selectedPlaces.indexOf(p);
     if (index >= 0) {
       this.selectedPlaces.splice(index, 1);
     }
     this.stepperForm.choosePlace.setValue({places: this.selectedPlaces});
-  };
+  }
 
   /**
    * move a place from provinces array to selectedPlaces array
    * @param p
    */
-  add = (p: Place) => {
+  add(p: Place) {
     this.selectedPlaces.push(p);
     const index = this.provinces.indexOf(p);
     if (index >= 0) {
       this.provinces.splice(index, 1);
     }
     this.stepperForm.choosePlace.setValue({places: this.selectedPlaces});
-  };
+  }
 
   /**
    * handle event click option in selection
    * @param event
    */
-  selectItem = (event: MatAutocompleteSelectedEvent) => {
+  selectItem(event: MatAutocompleteSelectedEvent) {
     this.add(event.option.value);
 
     // reset input
     this.placeInput.nativeElement.value = '';
     this.inputPlace.setValue(null);
-  };
+  }
 
   /**
    * filtering places by a name/place to make options
    * @param value
    */
-  private _filterStates = (value: string | Place): Place[] => {
+  private filterStates(value: string | Place): Place[] {
     if (typeof value === 'string') {
       // optimize search
       const searchValue = this.vtextPipe.transform(value);
       return this.provinces.filter(p => this.vtextPipe.transform(p.name).includes(searchValue));
 
     } else return this.provinces.filter(p => p.id === value.id);
-  };
+  }
 
 }

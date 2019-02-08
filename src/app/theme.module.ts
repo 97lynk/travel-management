@@ -59,7 +59,8 @@ import {
 } from '@angular/material';
 import {NgxPaginationModule} from 'ngx-pagination';
 import {TourListComponent} from './page/tour/tour-list/tour-list.component';
-import {CKEditorModule} from 'ng2-ckeditor';
+// import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
+import {CKEditorModule} from 'ngx-ckeditor';
 
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule];
 

@@ -9,7 +9,7 @@ export class VTextEncodePipe implements PipeTransform {
     return this.encodingVietNamese(text);
   }
 
-  private encodingVietNamese = (str) => {
+  private encodingVietNamese(str) {
     if (!str) str = '';
     str = str.toLowerCase();
     str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a');
