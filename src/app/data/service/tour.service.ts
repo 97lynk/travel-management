@@ -16,39 +16,52 @@ export class TourService {
   constructor(private http: HttpClient) {
   }
 
-  getTours = (page: number = 0, size: number = 10): Observable<Tour> =>
-      this.http.get<Tour>(`${this.TOUR_API_URL}`, {
-        params: {
-          page: `${page}`,
-          size: `${size}`
-        }
-      });
+  getTours(page: number = 0, size: number = 10): Observable<Tour> {
+    return this.http.get<Tour>(`${this.TOUR_API_URL}`, {
+      params: {
+        page: `${page}`,
+        size: `${size}`
+      }
+    });
+  }
 
-  getPlanById = (id: number | string, expand: string[] = []): Observable<Plan> =>
-      this.http.get<Plan>(`${this.PLAN_API_URL}/${id}`, {params: {_expand: expand.join(',')}});
+  getPlanById(id: number | string, expand: string[] = []): Observable<Plan> {
+    return this.http.get<Plan>(`${this.PLAN_API_URL}/${id}`, {params: {_expand: expand.join(',')}});
+  }
 
-  getPlans = (page: number = 0, size: number = 10, expand: string[] = []): Observable<Plan> =>
-      this.http.get<Plan>(`${this.PLAN_API_URL}`, {
-        params: {
-          _expand: expand.join(','),
-          page: `${page}`,
-          size: `${size}`
-        }
-      });
+  getPlans(page: number = 0, size: number = 10, expand: string[] = []): Observable<Plan> {
+    return this.http.get<Plan>(`${this.PLAN_API_URL}`, {
+      params: {
+        _expand: expand.join(','),
+        page: `${page}`,
+        size: `${size}`
+      }
+    });
+  }
 
 
-  getPlansByPlaceId = (id: number | string): Observable<Plan> =>
-      this.http.get<Plan>(this.PLAN_API_URL, {params: {placeId: `${id}`, _expand: 'tour'}});
+  getPlansByPlaceId(id: number | string): Observable<Plan> {
+    return this.http.get<Plan>(this.PLAN_API_URL, {params: {placeId: `${id}`, _expand: 'tour'}});
+  }
 
-  followLink = <T>(link: string): Observable<T> => this.http.get<T>(link);
+  followLink<T>(link: string): Observable<T> {
+    return this.http.get<T>(link);
+  }
 
-  loadContentPostOfTour = (url: string): Observable<string> =>
-      this.http.get(`${environment.apiHost}/data/contents/${url}`, {responseType: 'text'});
+  loadContentPostOfTour(url: string): Observable<string> {
+    return this.http.get(`${environment.apiHost}/data/contents/${url}`, {responseType: 'text'});
+  }
 
-  updatePlanById = (id: number | string, plan: Plan) => this.http.put<Plan>(`${this.PLAN_API_URL}/${id}`, plan);
+  updatePlanById(id: number | string, plan: Plan) {
+    return this.http.put<Plan>(`${this.PLAN_API_URL}/${id}`, plan);
+  }
 
-  addNewPlan = (plan: Plan) => this.http.post<Plan>(this.PLAN_API_URL, plan);
+  addNewPlan(plan: Plan) {
+    return this.http.post<Plan>(this.PLAN_API_URL, plan);
+  }
 
-  deletePlanById = (id: number) => this.http.delete<Plan>(`${this.PLAN_API_URL}/${id}`);
+  deletePlanById(id: number) {
+    return this.http.delete<Plan>(`${this.PLAN_API_URL}/${id}`);
+  }
 
 }

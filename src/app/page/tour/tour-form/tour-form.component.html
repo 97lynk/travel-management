@@ -1,108 +1,155 @@
 <nb-card>
-  <nb-card-header>Chỉnh sửa Tour
-    <button nbButton size="xsmall" shape="rectangle" (click)="view2()">Xem truoc</button></nb-card-header>
   <nb-card-body>
-    <form *ngIf="!view" class="row" [formGroup]="tourControl">
-      <div class="col-lg-6">
-        <div class="form-group">
-          <label for="tour-name">Tên tour</label>
-          <input type="text" id="tour-name" formControlName="tourName" class="form-control"
-                 [class.form-control-danger]="tourControl.controls.tourName.invalid && tourControl.controls.tourName.touched">
-          <ng-container
-                  *ngIf="tourControl.controls.tourName.invalid && tourControl.controls.tourName.touched">
-            <p class="text-danger" *ngIf="tourControl.controls.tourName.hasError('required')">
-              Trường này không được trống
-            </p>
-          </ng-container>
-        </div>
+    <nb-tabset>
+      <nb-tab tabTitle="Chỉnh sửa Tour" tabIcon="eva eva-edit" responsive>
+        <div class="container py-4">
+          <form class="row" [formGroup]="tourControl">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="tour-name">Tên tour</label>
+                <input type="text" id="tour-name" formControlName="tourName" class="form-control"
+                       [class.form-control-danger]="tourControl.controls.tourName.invalid && tourControl.controls.tourName.touched">
+                <ng-container
+                        *ngIf="tourControl.controls.tourName.invalid && tourControl.controls.tourName.touched">
+                  <p class="text-danger" *ngIf="tourControl.controls.tourName.hasError('required')">
+                    Trường này không được trống
+                  </p>
+                </ng-container>
+              </div>
 
-        <div class="form-group">
-          <label for="tour-url">Url</label>
-          <input type="text" id="tour-url" formControlName="tourUrl" class="form-control"
-                 [class.form-control-danger]="tourControl.controls.tourUrl.invalid && tourControl.controls.tourUrl.touched">
-          <ng-container
-                  *ngIf="tourControl.controls.tourUrl.invalid && tourControl.controls.tourUrl.touched">
-            <p class="text-danger" *ngIf="tourControl.controls.tourName.hasError('required')">
-              Trường này không được trống
-            </p>
-          </ng-container>
-        </div>
+              <div class="form-group">
+                <label for="tour-url">Url</label>
+                <input type="text" id="tour-url" formControlName="tourUrl" class="form-control"
+                       [class.form-control-danger]="tourControl.controls.tourUrl.invalid && tourControl.controls.tourUrl.touched">
+                <ng-container
+                        *ngIf="tourControl.controls.tourUrl.invalid && tourControl.controls.tourUrl.touched">
+                  <p class="text-danger" *ngIf="tourControl.controls.tourName.hasError('required')">
+                    Trường này không được trống
+                  </p>
+                </ng-container>
+              </div>
 
-        <div class="row">
-          <div class="col-sm-6">
-            <div class="form-group">
-              <label for="no-date">Thời gian tour</label>
-              <div class="input-group">
-                <input type="number" min="1" id="no-date" formControlName="numberOfDate" class="form-control"
-                       [class.form-control-danger]="tourControl.controls.numberOfDate.invalid && tourControl.controls.numberOfDate.touched">
-                <span class="input-group-append"><span class="input-group-text">ngày</span></span>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="no-date">Thời gian tour</label>
+                    <div class="input-group">
+                      <input type="number" min="1" id="no-date" formControlName="numberOfDate" class="form-control"
+                             [class.form-control-danger]="tourControl.controls.numberOfDate.invalid && tourControl.controls.numberOfDate.touched">
+                      <span class="input-group-append"><span class="input-group-text">ngày</span></span>
+                    </div>
+                    <ng-container
+                            *ngIf="tourControl.controls.numberOfDate.invalid && tourControl.controls.numberOfDate.touched">
+                      <p class="text-danger" *ngIf="tourControl.controls.numberOfDate.hasError('required')">
+                        Trường này không được trống
+                      </p>
+                      <p class="text-danger" *ngIf="tourControl.controls.numberOfDate.hasError('min')">
+                        Giá trị tối thiểu là {{ tourControl.controls.numberOfDate.errors?.min?.min }}
+                      </p>
+                    </ng-container>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="no-night"><br></label>
+                    <div class="input-group">
+                      <input type="number" min="1" id="no-night" formControlName="numberOfNight" class="form-control"
+                             [class.form-control-danger]="tourControl.controls.numberOfNight.invalid && tourControl.controls.numberOfNight.touched">
+                      <span class="input-group-append"><span class="input-group-text">đêm</span></span>
+                    </div>
+                    <ng-container
+                            *ngIf="tourControl.controls.numberOfNight.invalid && tourControl.controls.numberOfNight.touched">
+                      <p class="text-danger" *ngIf="tourControl.controls.numberOfDate.hasError('required')">
+                        Trường này không được trống
+                      </p>
+                      <p class="text-danger" *ngIf="tourControl.controls.numberOfNight.hasError('min')">
+                        Giá trị tối thiểu là {{ tourControl.controls.numberOfDate.errors?.min?.min }}
+                      </p>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="description">Mô tả</label>
+                <textarea class="form-control" rows="6" formControlName="description" id="description"
+                          [class.form-control-danger]="tourControl.controls.description.invalid && tourControl.controls.description.touched"></textarea>
+                <ng-container
+                        *ngIf="tourControl.controls.description.invalid && tourControl.controls.description.touched">
+                  <p class="text-danger" *ngIf="tourControl.controls.description.hasError('required')">
+                    Trường này không được trống
+                  </p>
+                </ng-container>
+              </div>
+            </div>
+            <div class="col-lg-6 bg-light">
+              <div class="form-group">
+                <label for="image-url">Hình ảnh</label>
+                <input type="url" id="image-url" formControlName="imageUrl" class="form-control" #imageUrl
+                       [class.form-control-danger]="tourControl.controls.imageUrl.invalid && tourControl.controls.imageUrl.touched">
               </div>
               <ng-container
-                      *ngIf="tourControl.controls.numberOfDate.invalid && tourControl.controls.numberOfDate.touched">
-                <p class="text-danger" *ngIf="tourControl.controls.numberOfDate.hasError('required')">
+                      *ngIf="tourControl.controls.imageUrl.invalid && tourControl.controls.imageUrl.touched">
+                <p class="text-danger" *ngIf="tourControl.controls.imageUrl.hasError('required')">
                   Trường này không được trống
                 </p>
-                <p class="text-danger" *ngIf="tourControl.controls.numberOfDate.hasError('min')">
-                  Giá trị tối thiểu là {{ tourControl.controls.numberOfDate.errors?.min?.min }}
+                <p class="text-danger" *ngIf="tourControl.controls.imageUrl.hasError('pattern')">
+                  Url không hợp lệ
                 </p>
               </ng-container>
+
+              <img class="img-fluid" [src]="imageUrl.value" alt="Xem trước hình ảnh" title="Xem trước hình ảnh"
+                   (error)="loadImageError(img)" #img/>
+            </div>
+          </form>
+
+          <div class="row">
+            <div class="col-lg-12 my-4">
+              <ck-editor [config]="CKEditorConfig" [(ngModel)]="contentHTML"
+                         skin="moono-lisa" language="vi" fullPage="false" [name]="CKEditorId"></ck-editor>
             </div>
           </div>
-          <div class="col-sm-6">
-            <div class="form-group">
-              <label for="no-night"><br></label>
-              <div class="input-group">
-                <input type="number" min="1" id="no-night" formControlName="numberOfNight" class="form-control"
-                       [class.form-control-danger]="tourControl.controls.numberOfNight.invalid && tourControl.controls.numberOfNight.touched">
-                <span class="input-group-append"><span class="input-group-text">đêm</span></span>
-              </div>
-              <ng-container
-                      *ngIf="tourControl.controls.numberOfNight.invalid && tourControl.controls.numberOfNight.touched">
-                <p class="text-danger" *ngIf="tourControl.controls.numberOfDate.hasError('required')">
-                  Trường này không được trống
-                </p>
-                <p class="text-danger" *ngIf="tourControl.controls.numberOfNight.hasError('min')">
-                  Giá trị tối thiểu là {{ tourControl.controls.numberOfDate.errors?.min?.min }}
-                </p>
-              </ng-container>
+
+          <div class="row">
+            <div class="col d-flex justify-content-end">
+              <button nbButton size="xsmall" shape="rectangle" [disabled]="tourControl.invalid">Lưu</button>
             </div>
           </div>
         </div>
+      </nb-tab>
 
-        <div class="form-group">
-          <label for="description">Mô tả</label>
-          <textarea class="form-control" rows="6" formControlName="description" id="description"
-                    [class.form-control-danger]="tourControl.controls.description.invalid && tourControl.controls.description.touched"></textarea>
-          <ng-container
-                  *ngIf="tourControl.controls.description.invalid && tourControl.controls.description.touched">
-            <p class="text-danger" *ngIf="tourControl.controls.description.hasError('required')">
-              Trường này không được trống
-            </p>
-          </ng-container>
+      <nb-tab tabTitle="Xem trước" tabIcon="eva eva-eye-outline" responsive>
+        <div class="container py-4">
+          <div class="row pb-3">
+            <div class="col-12">
+              <h4>Thông tin chung</h4>
+              <hr class="pt-0">
+            </div>
+            <div class="col-md-4">
+              <img class="img-fluid" [src]="imageUrl.value" alt="Xem trước hình ảnh" title="Xem trước hình ảnh"
+                   (error)="loadImageError(img2)" #img2/>
+            </div>
+            <div class="col-md-8">
+              <p>Tên tour: {{ tourControl.get('tourName').value }}</p>
+              <p>Thời gian {{ tourControl.get('numberOfDate').value }} ngày {{ tourControl.get('numberOfNight').value }} đêm</p>
+            </div>
+          </div>
+          <div class="row pb-3">
+            <div class="col">
+              <h4>Mô tả</h4>
+              <hr class="mt-0">
+              <pre>{{ tourControl.get('description').value }}</pre>
+            </div>
+          </div>
+          <div class="row pb-3">
+            <div class="col">
+              <h4>Lịch trình</h4>
+              <hr class="mt-0">
+              <div [innerHTML]="contentHTML"></div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div class="col-lg-6 bg-light">
-        <div class="form-group">
-          <label for="image-url">Hình ảnh</label>
-          <input type="url" id="image-url" formControlName="imageUrl" class="form-control" #imageUrl>
-        </div>
-        <img class="img-fluid" [src]="imageUrl.value" alt="Xem trước hình ảnh" title="Xem trước hình ảnh"
-             (error)="img.src = 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/09/12/11/naturo-monkey-selfie.jpg?w968h681'"
-             #img>
-      </div>
-    </form>
-
-    <div *ngIf="!view" class="row">
-      <div class="col my-4">
-        <ckeditor [config]="CKEditorConfig" [(ngModel)]="contentHTML"
-                  skin="moono-lisa" language="vi" ></ckeditor>
-      </div>
-    </div>
-
-    <div class="row col" *ngIf="view">
-      <div [innerHTML]="contentHTML"></div>
-    </div>
+      </nb-tab>
+    </nb-tabset>
   </nb-card-body>
-  <nb-card-footer></nb-card-footer>
 </nb-card>

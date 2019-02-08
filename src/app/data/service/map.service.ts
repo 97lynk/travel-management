@@ -16,16 +16,18 @@ export class MapService {
   constructor(private http: HttpClient) {
   }
 
-  getPlansBySearchPlace = (criterias: Criteria[] = []): Observable<Plan> => {
+  getPlansBySearchPlace(criterias: Criteria[] = []): Observable<Plan> {
     const searchStr = criterias.map(c => c.key
         .concat((c.operator == '=') ? ':' : c.operator)
         .concat(c.value)).join(',');
     return this.http.get<Plan>(`${this.MAP_API_URL}/plans`, {params: {search: searchStr}});
-  };
+  }
 
-  getPlacesHasPlan = (): Observable<Place> => this.http.get<Place>(`${this.MAP_API_URL}/places`);
+  getPlacesHasPlan(): Observable<Place> {
+    return this.http.get<Place>(`${this.MAP_API_URL}/places`);
+  }
 
-  getDescriptionPlace = (placeName: string): Observable<any> => {
+  getDescriptionPlace(placeName: string): Observable<any> {
     placeName = placeName
         .replace('Tp', '')
         .replace('Tt', '').trim();
@@ -42,8 +44,12 @@ export class MapService {
         });
   };
 
-  getPlaces = (): Observable<Place> =>  this.http.get<Place>(this.PLACE_API_URL);
+  getPlaces(): Observable<Place> {
+    return this.http.get<Place>(this.PLACE_API_URL);
+  }
 
-  followLink = <T>(link: string): Observable<T> => this.http.get<T>(link);
+  followLink<T>(link: string): Observable<T> {
+    return this.http.get<T>(link);
+  }
 
 }
